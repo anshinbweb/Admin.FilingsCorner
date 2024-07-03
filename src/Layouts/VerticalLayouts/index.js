@@ -180,11 +180,11 @@ const VerticalLayout = (props) => {
                       City
                     </Link>
                   </li>
-                  <li className="nav-item">
+                  {/* <li className="nav-item">
                     <Link to="/location" className="nav-link">
                       Company Location
                     </Link>
-                  </li>
+                  </li> */}
                 </ul>
               </Collapse>
             </li>

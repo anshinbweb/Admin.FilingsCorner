@@ -28,6 +28,8 @@ import {
 import moment from "moment-timezone";
 import DeleteModal from "../../Components/Common/DeleteModal";
 import FormsHeader from "../../Components/Common/FormsModalHeader";
+import FormsFooter from "../../Components/Common/FormAddFooter";
+import FormUpdateFooter from "../../Components/Common/FormUpdateFooter";
 const initialState = {
   code: "",
   savePercentage: "",
@@ -50,13 +52,6 @@ const PromocodeMaster = () => {
 
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    console.log(formErrors);
-    if (Object.keys(formErrors).length === 0 && isSubmit) {
-      console.log("no errors");
-    }
-  }, [formErrors, isSubmit]);
-
   const [modal_list, setmodal_list] = useState(false);
   const tog_list = () => {
     setmodal_list(!modal_list);
@@ -77,7 +72,6 @@ const PromocodeMaster = () => {
     set_Id(_id);
     getPromocodeMaster(_id)
       .then((res) => {
-        console.log(res);
         setValues({
           ...values,
           code: res.code,
@@ -99,6 +93,12 @@ const PromocodeMaster = () => {
 
   const handleCheck = (e) => {
     setValues({ ...values, IsActive: e.target.checked });
+  };
+
+  const handleSubmitCancel = () => {
+    setmodal_list(false);
+    setValues(initialState);
+    setIsSubmit(false);
   };
 
   const handleClick = (e) => {
@@ -138,7 +138,13 @@ const PromocodeMaster = () => {
   const handleDeleteClose = (e) => {
     e.preventDefault();
     setmodal_delete(false);
-  }
+  };
+
+  const handleUpdateCancel = (e) => {
+    setmodal_edit(false);
+    setIsSubmit(false);
+    setFormErrors({});
+  };
 
   const handleUpdate = (e) => {
     e.preventDefault();
@@ -346,7 +352,7 @@ const PromocodeMaster = () => {
             <Col lg={12}>
               <Card>
                 <CardHeader>
-                <FormsHeader
+                  <FormsHeader
                     formName="Promocode Master"
                     filter={filter}
                     handleFilter={handleFilter}
@@ -487,27 +493,10 @@ const PromocodeMaster = () => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleClick}
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_list(false);
-                  setValues(initialState);
-                  setIsSubmit(false);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormsFooter
+              handleSubmit={handleClick}
+              handleSubmitCancel={handleSubmitCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>
@@ -619,28 +608,10 @@ const PromocodeMaster = () => {
           </ModalBody>
 
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleUpdate}
-              >
-                Update
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_edit(false);
-                  setIsSubmit(false);
-                  setFormErrors({});
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormUpdateFooter
+              handleUpdate={handleUpdate}
+              handleUpdateCancel={handleUpdateCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>

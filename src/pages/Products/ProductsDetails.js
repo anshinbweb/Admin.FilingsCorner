@@ -28,6 +28,7 @@ import {
 import { listCategory } from "../../functions/Category/CategoryMaster";
 import DeleteModal from "../../Components/Common/DeleteModal";
 import FormsHeader from "../../Components/Common/FormsHeader";
+import FormsFooter from "../../Components/Common/FormAddFooter";
 
 const ProductDetails = () => {
   const [formErrors, setFormErrors] = useState({});
@@ -706,23 +707,10 @@ const ProductDetails = () => {
                                   </div>
 
                                   <Col lg={12}>
-                                    <div className="hstack gap-2 justify-content-end">
-                                      <button
-                                        type="submit"
-                                        className="btn btn-success  m-1"
-                                        id="add-btn"
-                                        onClick={handleClick}
-                                      >
-                                        Submit
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="btn btn-outline-danger m-1"
-                                        onClick={handleAddCancel}
-                                      >
-                                        Cancel
-                                      </button>
-                                    </div>
+                                  <FormsFooter
+                                      handleSubmit={handleClick}
+                                      handleSubmitCancel={handleAddCancel}
+                                    />
                                   </Col>
                                 </Row>
                               </Form>

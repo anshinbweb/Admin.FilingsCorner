@@ -29,6 +29,8 @@ import {
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
 import DeleteModal from "../../../Components/Common/DeleteModal";
 import FormsHeader from "../../../Components/Common/FormsModalHeader";
+import FormsFooter from "../../../Components/Common/FormAddFooter";
+import FormUpdateFooter from "../../../Components/Common/FormUpdateFooter";
 
 const initialState = {
   CountryName: "",
@@ -114,6 +116,12 @@ const Country = () => {
     setValues({ ...values, isActive: e.target.checked });
   };
 
+  const handleSubmitCancel = () => {
+    setmodal_list(false);
+    setValues(initialState);
+    setIsSubmit(false);
+  };
+
   const handleClick = (e) => {
     e.preventDefault();
     setFormErrors({});
@@ -165,7 +173,13 @@ const Country = () => {
   const handleDeleteClose = (e) => {
     e.preventDefault();
     setmodal_delete(false);
-  }
+  };
+
+  const handleUpdateCancel = (e) => {
+    setmodal_edit(false);
+    setIsSubmit(false);
+    setFormErrors({});
+  };
 
   const handleUpdate = (e) => {
     e.preventDefault();
@@ -337,7 +351,7 @@ const Country = () => {
             <Col lg={12}>
               <Card>
                 <CardHeader>
-                <FormsHeader
+                  <FormsHeader
                     formName="Country"
                     filter={filter}
                     handleFilter={handleFilter}
@@ -402,7 +416,9 @@ const Country = () => {
                 value={CountryName}
                 onChange={handleChange}
               />
-              <Label>Country <span className="text-danger">*</span> </Label>
+              <Label>
+                Country <span className="text-danger">*</span>{" "}
+              </Label>
               {isSubmit && (
                 <p className="text-danger">{formErrors.CountryName}</p>
               )}
@@ -420,27 +436,10 @@ const Country = () => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleClick}
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_list(false);
-                  setValues(initialState);
-                  setIsSubmit(false);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormsFooter
+              handleSubmit={handleClick}
+              handleSubmitCancel={handleSubmitCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>
@@ -474,7 +473,9 @@ const Country = () => {
                 value={CountryName}
                 onChange={handleChange}
               />
-              <Label>Country <span className="text-danger">*</span> </Label>
+              <Label>
+                Country <span className="text-danger">*</span>{" "}
+              </Label>
               {isSubmit && (
                 <p className="text-danger">{formErrors.CountryName}</p>
               )}
@@ -494,28 +495,10 @@ const Country = () => {
           </ModalBody>
 
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleUpdate}
-              >
-                Update
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_edit(false);
-                  setIsSubmit(false);
-                  setFormErrors({});
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormUpdateFooter
+              handleUpdate={handleUpdate}
+              handleUpdateCancel={handleUpdateCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>

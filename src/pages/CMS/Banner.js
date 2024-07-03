@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Card,
@@ -18,7 +18,7 @@ import {
 } from "reactstrap";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
-import 'react-image-crop/dist/ReactCrop.css';
+import "react-image-crop/dist/ReactCrop.css";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import {
@@ -29,6 +29,7 @@ import {
 } from "../../functions/CMS/Banner";
 import DeleteModal from "../../Components/Common/DeleteModal";
 import FormsHeader from "../../Components/Common/FormsModalHeader";
+import FormsFooter from "../../Components/Common/FormAddFooter";
 const initialState = {
   Title: "",
   keyWord: "",
@@ -36,7 +37,6 @@ const initialState = {
   bannerImage: "",
   IsActive: false,
 };
-
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
@@ -59,7 +59,11 @@ const Banner = () => {
   const imgRef = useRef(null);
   const previewCanvasRef = useRef(null);
   const [imgSrc, setImgSrc] = useState("");
-  const [crop, setCrop] = useState({ unit: '%', width: 90, aspect: ASPECT_RATIO });
+  const [crop, setCrop] = useState({
+    unit: "%",
+    width: 90,
+    aspect: ASPECT_RATIO,
+  });
   const [completedCrop, setCompletedCrop] = useState(null);
 
   useEffect(() => {
@@ -158,51 +162,58 @@ const Banner = () => {
   const validClassBI =
     errBI && isSubmit ? "form-control is-invalid" : "form-control";
 
-    const handleClick = async (e) => {
-      e.preventDefault();
-      setFormErrors({});
-      let errors = validate(values);
-      setFormErrors(errors);
-      setIsSubmit(true);
-    
-      if (Object.keys(errors).length === 0) {
-        const formData = new FormData();
-    
-        if (completedCrop && previewCanvasRef.current) {
-          const canvas = previewCanvasRef.current;
-          await new Promise((resolve) => {
-            canvas.toBlob(blob => {
-              formData.append("myFile", blob, 'filename.png');
-              resolve();
-            });
+  const handleSubmitCancel = () => {
+    setmodal_list(false);
+    setValues(initialState);
+    setIsSubmit(false);
+    setCheckImagePhoto(false);
+    setPhotoAdd("");
+    setImgSrc(null);
+  };
+
+  const handleClick = async (e) => {
+    e.preventDefault();
+    setFormErrors({});
+    let errors = validate(values);
+    setFormErrors(errors);
+    setIsSubmit(true);
+
+    if (Object.keys(errors).length === 0) {
+      const formData = new FormData();
+
+      if (completedCrop && previewCanvasRef.current) {
+        const canvas = previewCanvasRef.current;
+        await new Promise((resolve) => {
+          canvas.toBlob((blob) => {
+            formData.append("myFile", blob, "filename.png");
+            resolve();
           });
-        } else if (imgSrc) {
-          formData.append("myFile", imgSrc);
-        }
-    
-        formData.append("Description", values.Description);
-        formData.append("keyWord", values.keyWord);
-        formData.append("IsActive", values.IsActive);
-        formData.append("Title", values.Title);
-    
-        for (let [key, value] of formData.entries()) {
-          console.log(key, value);
-        }
-    
-        createBannerImages(formData)
-          .then((res) => {
-            setmodal_list(!modal_list);
-            setValues(initialState);
-            setIsSubmit(false);
-            setFormErrors({});
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+        });
+      } else if (imgSrc) {
+        formData.append("myFile", imgSrc);
       }
-    };
-    
-    
+
+      formData.append("Description", values.Description);
+      formData.append("keyWord", values.keyWord);
+      formData.append("IsActive", values.IsActive);
+      formData.append("Title", values.Title);
+
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+
+      createBannerImages(formData)
+        .then((res) => {
+          setmodal_list(!modal_list);
+          setValues(initialState);
+          setIsSubmit(false);
+          setFormErrors({});
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  };
 
   const handleDelete = (e) => {
     e.preventDefault();
@@ -219,8 +230,7 @@ const Banner = () => {
   const handleDeleteClose = (e) => {
     e.preventDefault();
     setmodal_delete(false);
-  }
-
+  };
 
   const onSelectFile = (e) => {
     const file = e.target.files[0];
@@ -312,15 +322,15 @@ const Banner = () => {
       if (completedCrop && previewCanvasRef.current) {
         const canvas = previewCanvasRef.current;
         await new Promise((resolve) => {
-          canvas.toBlob(blob => {
-            formData.append("myFile", blob, 'filename.png');
+          canvas.toBlob((blob) => {
+            formData.append("myFile", blob, "filename.png");
             resolve();
           });
         });
       } else if (imgSrc) {
         formData.append("myFile", imgSrc);
       }
-  
+
       formData.append("Description", values.Description);
       formData.append("keyWord", values.keyWord);
       formData.append("IsActive", values.IsActive);
@@ -493,7 +503,7 @@ const Banner = () => {
             <Col lg={12}>
               <Card>
                 <CardHeader>
-                <FormsHeader
+                  <FormsHeader
                     formName="Products Category"
                     filter={filter}
                     handleFilter={handleFilter}
@@ -596,19 +606,42 @@ const Banner = () => {
             </div>
 
             <Col lg={6}>
-            <div className="mb-3">
-                  <Label className="form-label">Banner Image</Label>
-                  <input type="file" name="bannerImage" accept="image/*" onChange={onSelectFile} />
-                  {imgSrc && (
-                    <div>
-                      <ReactCrop crop={crop} onChange={(_, percentCrop) => setCrop(percentCrop)} onComplete={(c) => setCompletedCrop(c)} aspect={ASPECT_RATIO}>
-                        <img ref={imgRef} alt="Crop me" src={imgSrc} onLoad={onImageLoad} />
-                      </ReactCrop>
-                      <canvas ref={previewCanvasRef} style={{ border: "1px solid black", objectFit: "contain", width: completedCrop?.width ?? 0, height: completedCrop?.height ?? 0 }} />
-                    </div>
-                  )}
-                  <p className="text-danger">{formErrors.bannerImage}</p>
-                </div>
+              <div className="mb-3">
+                <Label className="form-label">Banner Image</Label>
+                <input
+                  type="file"
+                  name="bannerImage"
+                  accept="image/*"
+                  onChange={onSelectFile}
+                />
+                {imgSrc && (
+                  <div>
+                    <ReactCrop
+                      crop={crop}
+                      onChange={(_, percentCrop) => setCrop(percentCrop)}
+                      onComplete={(c) => setCompletedCrop(c)}
+                      aspect={ASPECT_RATIO}
+                    >
+                      <img
+                        ref={imgRef}
+                        alt="Crop me"
+                        src={imgSrc}
+                        onLoad={onImageLoad}
+                      />
+                    </ReactCrop>
+                    <canvas
+                      ref={previewCanvasRef}
+                      style={{
+                        border: "1px solid black",
+                        objectFit: "contain",
+                        width: completedCrop?.width ?? 0,
+                        height: completedCrop?.height ?? 0,
+                      }}
+                    />
+                  </div>
+                )}
+                <p className="text-danger">{formErrors.bannerImage}</p>
+              </div>
             </Col>
 
             <div className="form-check mb-2">
@@ -623,30 +656,10 @@ const Banner = () => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleClick}
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_list(false);
-                  setValues(initialState);
-                  setIsSubmit(false);
-                  setCheckImagePhoto(false);
-                  setPhotoAdd("");
-                  setImgSrc(null);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormsFooter
+              handleSubmit={handleClick}
+              handleSubmitCancel={handleSubmitCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>
@@ -716,19 +729,42 @@ const Banner = () => {
             </div>
 
             <Col lg={6}>
-            <div className="mb-3">
-                  <Label className="form-label">Banner Image</Label>
-                  <input type="file" name="bannerImage" accept="image/*" onChange={onSelectFile} />
-                  {imgSrc && (
-                    <div>
-                      <ReactCrop crop={crop} onChange={(_, percentCrop) => setCrop(percentCrop)} onComplete={(c) => setCompletedCrop(c)} aspect={ASPECT_RATIO}>
-                        <img ref={imgRef} alt="Crop me" src={imgSrc} onLoad={onImageLoad} />
-                      </ReactCrop>
-                      <canvas ref={previewCanvasRef} style={{ border: "1px solid black", objectFit: "contain", width: completedCrop?.width ?? 0, height: completedCrop?.height ?? 0 }} />
-                    </div>
-                  )}
-                  <p className="text-danger">{formErrors.bannerImage}</p>
-                </div>
+              <div className="mb-3">
+                <Label className="form-label">Banner Image</Label>
+                <input
+                  type="file"
+                  name="bannerImage"
+                  accept="image/*"
+                  onChange={onSelectFile}
+                />
+                {imgSrc && (
+                  <div>
+                    <ReactCrop
+                      crop={crop}
+                      onChange={(_, percentCrop) => setCrop(percentCrop)}
+                      onComplete={(c) => setCompletedCrop(c)}
+                      aspect={ASPECT_RATIO}
+                    >
+                      <img
+                        ref={imgRef}
+                        alt="Crop me"
+                        src={imgSrc}
+                        onLoad={onImageLoad}
+                      />
+                    </ReactCrop>
+                    <canvas
+                      ref={previewCanvasRef}
+                      style={{
+                        border: "1px solid black",
+                        objectFit: "contain",
+                        width: completedCrop?.width ?? 0,
+                        height: completedCrop?.height ?? 0,
+                      }}
+                    />
+                  </div>
+                )}
+                <p className="text-danger">{formErrors.bannerImage}</p>
+              </div>
             </Col>
 
             <div className="form-check mb-2">
