@@ -69,6 +69,7 @@
     "react-flatpickr": "^3.10.7",
     "react-google-login": "^5.2.2",
     "react-i18next": "^11.15.3",
+    "react-image-crop": "^11.0.5",
     "react-image-lightbox": "^5.1.4",
     "react-jvectormap": "^0.0.16",
     "react-leaflet": "^4.0.2",
