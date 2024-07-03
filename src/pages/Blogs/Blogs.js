@@ -32,6 +32,8 @@ import {
   uploadImage,
 } from "../../functions/Blogs/Blogs";
 import DeleteModal from "../../Components/Common/DeleteModal";
+import FormsFooter from "../../Components/Common/FormAddFooter";
+import FormUpdateFooter from "../../Components/Common/FormUpdateFooter";
 
 const Blogs = () => {
   const [blogTitle, setblogTitle] = useState("");
@@ -192,7 +194,7 @@ const Blogs = () => {
   const handleDeleteClose = (e) => {
     e.preventDefault();
     setmodal_delete(false);
-  }
+  };
 
   const handleUpdate = (e) => {
     e.preventDefault();
@@ -795,23 +797,10 @@ const Blogs = () => {
                                   )}
 
                                   <Col lg={12}>
-                                    <div className="hstack gap-2 justify-content-end">
-                                      <button
-                                        type="submit"
-                                        className="btn btn-success  m-1"
-                                        id="add-btn"
-                                        onClick={handleClick}
-                                      >
-                                        Submit
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="btn btn-outline-danger m-1"
-                                        onClick={handleAddCancel}
-                                      >
-                                        Cancel
-                                      </button>
-                                    </div>
+                                    <FormsFooter
+                                      handleSubmit={handleClick}
+                                      handleSubmitCancel={handleAddCancel}
+                                    />
                                   </Col>
                                 </Row>
                               </Form>
@@ -993,23 +982,10 @@ const Blogs = () => {
                                   )}
 
                                   <Col lg={12}>
-                                    <div className="text-end">
-                                      <button
-                                        type="submit"
-                                        className=" btn btn-success m-1"
-                                        id="add-btn"
-                                        onClick={handleUpdate}
-                                      >
-                                        Update
-                                      </button>
-                                      <button
-                                        type="button"
-                                        className="btn btn-outline-danger m-1"
-                                        onClick={handleUpdateCancel}
-                                      >
-                                        Cancel
-                                      </button>
-                                    </div>
+                                    <FormUpdateFooter
+                                      handleUpdate={handleUpdate}
+                                      handleUpdateCancel={handleUpdateCancel}
+                                    />
                                   </Col>
                                 </Row>
                               </Form>

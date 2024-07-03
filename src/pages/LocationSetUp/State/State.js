@@ -33,6 +33,8 @@ import {
 } from "../../../functions/Location/Location";
 import DeleteModal from "../../../Components/Common/DeleteModal";
 import FormsHeader from "../../../Components/Common/FormsModalHeader";
+import FormsFooter from "../../../Components/Common/FormAddFooter";
+import FormUpdateFooter from "../../../Components/Common/FormUpdateFooter";
 
 const initialState = {
   StateName: "",
@@ -145,6 +147,13 @@ const State = () => {
     console.log(e.target.checked);
     setValues({ ...values, isActive: e.target.checked });
   };
+
+  const handleSubmitCancel = () => {
+    setmodal_list(false);
+    setValues(initialState);
+    setIsSubmit(false);
+  };
+
   const handleClick = (e) => {
     e.preventDefault();
     console.log(values);
@@ -196,7 +205,13 @@ const State = () => {
   const handleDeleteClose = (e) => {
     e.preventDefault();
     setmodal_delete(false);
-  }
+  };
+
+  const handleUpdateCancel = (e) => {
+    setmodal_edit(false);
+    setIsSubmit(false);
+    setFormErrors({});
+  };
 
   const handleUpdate = (e) => {
     e.preventDefault();
@@ -274,14 +289,17 @@ const State = () => {
     }
 
     await axios
-      .post(`${process.env.REACT_APP_API_URL_COFFEE}/api/auth/location/states`, {
-        skip: skip,
-        per_page: perPage,
-        sorton: column,
-        sortdir: sortDirection,
-        match: query,
-        isActive: filter,
-      })
+      .post(
+        `${process.env.REACT_APP_API_URL_COFFEE}/api/auth/location/states`,
+        {
+          skip: skip,
+          per_page: perPage,
+          sorton: column,
+          sortdir: sortDirection,
+          match: query,
+          isActive: filter,
+        }
+      )
       .then((response) => {
         if (response.length > 0) {
           let res = response[0];
@@ -383,7 +401,7 @@ const State = () => {
             <Col lg={12}>
               <Card>
                 <CardHeader>
-                <FormsHeader
+                  <FormsHeader
                     formName="Country"
                     filter={filter}
                     handleFilter={handleFilter}
@@ -455,7 +473,10 @@ const State = () => {
                   );
                 })}
               </select>
-              <Label> Country<span className="text-danger">*</span></Label>
+              <Label>
+                {" "}
+                Country<span className="text-danger">*</span>
+              </Label>
               {isSubmit && (
                 <p className="text-danger">{formErrors.CountryID}</p>
               )}
@@ -470,7 +491,9 @@ const State = () => {
                 value={StateName}
                 onChange={handleChange}
               />
-              <Label>State <span className="text-danger">*</span></Label>
+              <Label>
+                State <span className="text-danger">*</span>
+              </Label>
               {isSubmit && (
                 <p className="text-danger">{formErrors.StateName}</p>
               )}
@@ -488,28 +511,10 @@ const State = () => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleClick}
-              >
-                Submit
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_list(false);
-                  setValues(initialState);
-                  setIsSubmit(false);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormsFooter
+              handleSubmit={handleClick}
+              handleSubmitCancel={handleSubmitCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>
@@ -550,7 +555,10 @@ const State = () => {
                   );
                 })}
               </select>
-              <Label> Country<span className="text-danger">*</span></Label>
+              <Label>
+                {" "}
+                Country<span className="text-danger">*</span>
+              </Label>
               {isSubmit && (
                 <p className="text-danger">{formErrors.CountryID}</p>
               )}
@@ -566,7 +574,9 @@ const State = () => {
                 value={StateName}
                 onChange={handleChange}
               />
-              <Label>State <span className="text-danger">*</span></Label>
+              <Label>
+                State <span className="text-danger">*</span>
+              </Label>
               {isSubmit && (
                 <p className="text-danger">{formErrors.StateName}</p>
               )}
@@ -585,28 +595,10 @@ const State = () => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleUpdate}
-              >
-                Update
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_edit(false);
-                  setIsSubmit(false);
-                  setFormErrors({});
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormUpdateFooter
+              handleUpdate={handleUpdate}
+              handleUpdateCancel={handleUpdateCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>

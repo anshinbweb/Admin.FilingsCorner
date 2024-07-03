@@ -31,10 +31,12 @@ import {
   createCompanyLocation,
   getCompanyLocation,
   updateCompanyLocation,
-  removeCompanyLocation
+  removeCompanyLocation,
 } from "../../functions/Location/CompanyLocation";
 import DeleteModal from "../../Components/Common/DeleteModal";
 import FormsHeader from "../../Components/Common/FormsModalHeader";
+import FormsFooter from "../../Components/Common/FormAddFooter";
+import FormUpdateFooter from "../../Components/Common/FormUpdateFooter";
 
 const initialState = {
   CityID: "",
@@ -129,6 +131,14 @@ const CompanyLocation = () => {
       });
   };
 
+  const handleUpdateCancel = () => {
+    setmodal_edit(false);
+    setIsSubmit(false);
+    setFormErrors({});
+    setImage("");
+    setValues(initialState);
+  };
+
   const handleUpdate = (e) => {
     e.preventDefault();
     // let erros = validate(values);
@@ -136,31 +146,31 @@ const CompanyLocation = () => {
     setIsSubmit(true);
 
     // if (Object.keys(erros).length === 0) {
-      const formdata = new FormData();
+    const formdata = new FormData();
 
-      formdata.append("CityID", values.CityID);
-      formdata.append("CountryID", values.CountryID);
-      formdata.append("StateID", values.StateID);
-      formdata.append("Area", values.Area);
-      formdata.append("Address", values.Address);
-      formdata.append("longitude", values.longitude);
-      formdata.append("latitude", values.latitude);
-      formdata.append("Location", values.Location);
-      formdata.append("myFile", values.StoreLogo);
-      formdata.append("IsActive", values.IsActive);
+    formdata.append("CityID", values.CityID);
+    formdata.append("CountryID", values.CountryID);
+    formdata.append("StateID", values.StateID);
+    formdata.append("Area", values.Area);
+    formdata.append("Address", values.Address);
+    formdata.append("longitude", values.longitude);
+    formdata.append("latitude", values.latitude);
+    formdata.append("Location", values.Location);
+    formdata.append("myFile", values.StoreLogo);
+    formdata.append("IsActive", values.IsActive);
 
-      updateCompanyLocation(_id, formdata)
-        .then((res) => {
-          setmodal_edit(!modal_edit);
-          fetchData();
-          setNewProfileImageSelected(false);
-          setImage("");
-          setFormErrors({});
-          setValues(initialState);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    updateCompanyLocation(_id, formdata)
+      .then((res) => {
+        setmodal_edit(!modal_edit);
+        fetchData();
+        setNewProfileImageSelected(false);
+        setImage("");
+        setFormErrors({});
+        setValues(initialState);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     // }
   };
 
@@ -199,6 +209,14 @@ const CompanyLocation = () => {
     setValues({ ...values, IsActive: e.target.checked });
   };
 
+  const handleSubmitCancel = () => {
+    setmodal_list(false);
+    setValues(initialState);
+    setIsSubmit(false);
+    setFormErrors({});
+    setImage("");
+  };
+
   const handleClick = (e) => {
     e.preventDefault();
     // let erros = validate(values);
@@ -206,34 +224,34 @@ const CompanyLocation = () => {
     setIsSubmit(true);
 
     // if (Object.keys(erros).length === 0) {
-      const formdata = new FormData();
+    const formdata = new FormData();
 
-      formdata.append("CityID", values.CityID);
-      formdata.append("CountryID", values.CountryID);
-      formdata.append("StateID", values.StateID);
-      formdata.append("Area", values.Area);
-      formdata.append("Address", values.Address);
-      formdata.append("longitude", values.longitude);
-      formdata.append("latitude", values.latitude);
-      formdata.append("Location", values.Location);
-      formdata.append("myFile", values.StoreLogo);
-      formdata.append("IsActive", values.IsActive);
+    formdata.append("CityID", values.CityID);
+    formdata.append("CountryID", values.CountryID);
+    formdata.append("StateID", values.StateID);
+    formdata.append("Area", values.Area);
+    formdata.append("Address", values.Address);
+    formdata.append("longitude", values.longitude);
+    formdata.append("latitude", values.latitude);
+    formdata.append("Location", values.Location);
+    formdata.append("myFile", values.StoreLogo);
+    formdata.append("IsActive", values.IsActive);
 
-      createCompanyLocation(formdata)
-        .then((res) => {
-          if (res.isOk) {
-            setmodal_list(!modal_list);
-            setValues(initialState);
-            setIsSubmit(false);
-            setFormErrors({});
-            setImage("");
-            setNewProfileImageSelected(false);
-            fetchData();
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    createCompanyLocation(formdata)
+      .then((res) => {
+        if (res.isOk) {
+          setmodal_list(!modal_list);
+          setValues(initialState);
+          setIsSubmit(false);
+          setFormErrors({});
+          setImage("");
+          setNewProfileImageSelected(false);
+          fetchData();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     // }
   };
 
@@ -252,7 +270,7 @@ const CompanyLocation = () => {
   const handleDeleteClose = (e) => {
     e.preventDefault();
     setmodal_delete(false);
-  }
+  };
 
   const [errCiN, setErrCiN] = useState(false);
   const [errCC, setErrCC] = useState(false);
@@ -286,7 +304,7 @@ const CompanyLocation = () => {
     if (values.Address !== "") {
       setErrAD(false);
     }
-    
+
     if (values.Location == "") {
       errors.Location = "Location is Required!";
       setErrLocation(true);
@@ -431,7 +449,7 @@ const CompanyLocation = () => {
     {
       name: "Status",
       selector: (row) => {
-        return <p>{row. IsActive ? "Active" : "InActive"}</p>;
+        return <p>{row.IsActive ? "Active" : "InActive"}</p>;
       },
       sortable: false,
       sortField: "Status",
@@ -487,7 +505,7 @@ const CompanyLocation = () => {
             <Col lg={12}>
               <Card>
                 <CardHeader>
-                <FormsHeader
+                  <FormsHeader
                     formName="Company Location"
                     filter={filter}
                     handleFilter={handleFilter}
@@ -567,7 +585,7 @@ const CompanyLocation = () => {
                     })}
                   </select>
                   <Label>
-                     Country <span className="text-danger">*</span>
+                    Country <span className="text-danger">*</span>
                   </Label>
                   {isSubmit && (
                     <p className="text-danger">{formErrors.CountryID}</p>
@@ -596,7 +614,7 @@ const CompanyLocation = () => {
                     })}
                   </select>
                   <Label>
-                     State <span className="text-danger">*</span>
+                    State <span className="text-danger">*</span>
                   </Label>
                   {isSubmit && (
                     <p className="text-danger">{formErrors.StateID}</p>
@@ -627,7 +645,7 @@ const CompanyLocation = () => {
                     })}
                   </select>
                   <Label>
-                     City <span className="text-danger">*</span>
+                    City <span className="text-danger">*</span>
                   </Label>
                   {isSubmit && (
                     <p className="text-danger">{formErrors.CityID}</p>
@@ -647,9 +665,7 @@ const CompanyLocation = () => {
                     value={Area}
                     onChange={handleChange}
                   />
-                  <Label>
-                    Area 
-                  </Label>
+                  <Label>Area</Label>
                   {/* {isSubmit && <p className="text-danger">{formErrors.Area}</p>} */}
                 </div>
               </Col>
@@ -665,7 +681,7 @@ const CompanyLocation = () => {
                     onChange={handleChange}
                   />
                   <Label>
-                    Location  <span className="text-danger">*</span>
+                    Location <span className="text-danger">*</span>
                   </Label>
                   {isSubmit && (
                     <p className="text-danger">{formErrors.Location}</p>
@@ -729,7 +745,6 @@ const CompanyLocation = () => {
               </Col>
             </Row>
 
-          
             <Col lg={6}>
               <label>
                 Store Logo <span className="text-danger">*</span>
@@ -763,29 +778,10 @@ const CompanyLocation = () => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleClick}
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_list(false);
-                  setValues(initialState);
-                  setIsSubmit(false);
-                  setFormErrors({});
-                  setImage("");
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormsFooter
+              handleSubmit={handleClick}
+              handleSubmitCancel={handleSubmitCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>
@@ -807,7 +803,6 @@ const CompanyLocation = () => {
           }}
         >
           Edit Company Location
-          
         </ModalHeader>
         <form>
           <ModalBody>
@@ -917,9 +912,7 @@ const CompanyLocation = () => {
                     value={Area}
                     onChange={handleChange}
                   />
-                  <Label>
-                    Area 
-                  </Label>
+                  <Label>Area</Label>
                   {/* {isSubmit && <p className="text-danger">{formErrors.Area}</p>} */}
                 </div>
               </Col>
@@ -1002,7 +995,6 @@ const CompanyLocation = () => {
               </Col>
             </Row>
 
-          
             <Col lg={6}>
               <label>
                 Store Logo <span className="text-danger">*</span>
@@ -1047,30 +1039,10 @@ const CompanyLocation = () => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleUpdate}
-              >
-                Update
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_edit(false);
-                  setIsSubmit(false);
-                  setFormErrors({});
-                  setImage("");
-                  setValues(initialState);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormUpdateFooter
+              handleUpdate={handleUpdate}
+              handleUpdateCancel={handleUpdateCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>

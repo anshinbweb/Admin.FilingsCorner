@@ -28,6 +28,7 @@ import {
 } from "../../functions/Auth/AdminUser";
 import DeleteModal from "../../Components/Common/DeleteModal";
 import FormsHeader from "../../Components/Common/FormsModalHeader";
+import FormsFooter from "../../Components/Common/FormAddFooter";
 
 const initialState = {
   firstName: "",
@@ -108,6 +109,12 @@ const AdminUser = () => {
     setValues({ ...values, IsActive: e.target.checked });
   };
 
+  const handleSubmitCancel = () => {
+    setmodal_list(false);
+    setValues(initialState);
+    setIsSubmit(false);
+  };
+
   const handleClick = (e) => {
     e.preventDefault();
     setFormErrors({});
@@ -147,7 +154,7 @@ const AdminUser = () => {
   const handleDeleteClose = (e) => {
     e.preventDefault();
     setmodal_delete(false);
-  }
+  };
 
   const handleUpdate = (e) => {
     e.preventDefault();
@@ -365,7 +372,7 @@ const AdminUser = () => {
             <Col lg={12}>
               <Card>
                 <CardHeader>
-                <FormsHeader
+                  <FormsHeader
                     formName="Products Category"
                     filter={filter}
                     handleFilter={handleFilter}
@@ -495,27 +502,10 @@ const AdminUser = () => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleClick}
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_list(false);
-                  setValues(initialState);
-                  setIsSubmit(false);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormsFooter
+              handleSubmit={handleClick}
+              handleSubmitCancel={handleSubmitCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>

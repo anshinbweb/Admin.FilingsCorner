@@ -28,6 +28,8 @@ import {
 } from "../../functions/Category/CategoryMaster";
 import DeleteModal from "../../Components/Common/DeleteModal";
 import FormsHeader from "../../Components/Common/FormsModalHeader";
+import FormsFooter from "../../Components/Common/FormAddFooter";
+import FormUpdateFooter from "../../Components/Common/FormUpdateFooter";
 
 const initialState = {
   categoryName: "",
@@ -97,14 +99,20 @@ const CategoryMaster = () => {
     setValues({ ...values, IsActive: e.target.checked });
   };
 
+  const handleSubmitCancel = () => {
+    setmodal_list(false);
+    setValues(initialState);
+    setIsSubmit(false);
+  };
+
   const handleClick = (e) => {
     e.preventDefault();
     setFormErrors({});
-    console.log("country", values);
-    let erros = validate(values);
-    setFormErrors(erros);
+    let errors = validate(values);
+    setFormErrors(errors);
     setIsSubmit(true);
 
+    if (Object.keys(errors).length === 0) {
     createCategory(values)
       .then((res) => {
         setmodal_list(!modal_list);
@@ -126,6 +134,7 @@ const CategoryMaster = () => {
       .catch((error) => {
         console.log(error);
       });
+    }
   };
 
   const handleDelete = (e) => {
@@ -143,6 +152,12 @@ const CategoryMaster = () => {
   const handleDeleteClose = (e) => {
     e.preventDefault();
     setmodal_delete(false);
+  };
+
+  const handleUpdateCancel = (e) => {
+    setmodal_edit(false);
+    setIsSubmit(false);
+    setFormErrors({});
   };
 
   const handleUpdate = (e) => {
@@ -166,7 +181,7 @@ const CategoryMaster = () => {
   const validate = (values) => {
     const errors = {};
 
-    if (values.categoryName === "") {
+    if (values.categoryName == "") {
       errors.categoryName = "Category Name is required!";
       setErrCN(true);
     }
@@ -398,27 +413,10 @@ const CategoryMaster = () => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleClick}
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_list(false);
-                  setValues(initialState);
-                  setIsSubmit(false);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            <FormsFooter
+              handleSubmit={handleClick}
+              handleSubmitCancel={handleSubmitCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>
@@ -474,28 +472,10 @@ const CategoryMaster = () => {
           </ModalBody>
 
           <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-success"
-                id="add-btn"
-                onClick={handleUpdate}
-              >
-                Update
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => {
-                  setmodal_edit(false);
-                  setIsSubmit(false);
-                  setFormErrors({});
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+          <FormUpdateFooter
+              handleUpdate={handleUpdate}
+              handleUpdateCancel={handleUpdateCancel}
+            />
           </ModalFooter>
         </form>
       </Modal>
