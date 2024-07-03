@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import {
   Button,
   Card,
@@ -17,6 +17,8 @@ import {
   Row,
 } from "reactstrap";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
+import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
+import 'react-image-crop/dist/ReactCrop.css';
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import {
@@ -33,6 +35,10 @@ const initialState = {
   IsActive: false,
 };
 
+
+const ASPECT_RATIO = 1;
+const MIN_DIMENSION = 150;
+
 const Banner = () => {
   const [values, setValues] = useState(initialState);
   const { Title, keyWord, Description, bannerImage, IsActive } = values;
@@ -46,6 +52,13 @@ const Banner = () => {
   const [remove_id, setRemove_id] = useState("");
 
   const [data, setData] = useState([]);
+  const [error, setError] = useState("");
+
+  const imgRef = useRef(null);
+  const previewCanvasRef = useRef(null);
+  const [imgSrc, setImgSrc] = useState("");
+  const [crop, setCrop] = useState({ unit: '%', width: 90, aspect: ASPECT_RATIO });
+  const [completedCrop, setCompletedCrop] = useState(null);
 
   useEffect(() => {
     console.log(formErrors);
@@ -83,6 +96,8 @@ const Banner = () => {
           bannerImage: res.bannerImage,
           IsActive: res.IsActive,
         });
+
+        setImgSrc(res.bannerImage);
         console.log("res", values.Title);
       })
       .catch((err) => {
@@ -121,13 +136,13 @@ const Banner = () => {
       setErrKW(false);
     }
 
-    if (values.bannerImage === "") {
-      errors.bannerImage = "Banner Image is required!";
-      setErrBI(true);
-    }
-    if (values.bannerImage !== "") {
-      setErrBI(false);
-    }
+    // if (values.bannerImage === "") {
+    //   errors.bannerImage = "Banner Image is required!";
+    //   setErrBI(true);
+    // }
+    // if (values.bannerImage !== "") {
+    //   setErrBI(false);
+    // }
 
     return errors;
   };
@@ -141,38 +156,51 @@ const Banner = () => {
   const validClassBI =
     errBI && isSubmit ? "form-control is-invalid" : "form-control";
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    setFormErrors({});
-    let erros = validate(values);
-    setFormErrors(erros);
-    setIsSubmit(true);
-
-    if (Object.keys(erros).length === 0) {
-      const formdata = new FormData();
-
-      formdata.append("myFile", values.bannerImage);
-      formdata.append("Description", values.Description);
-      formdata.append("keyWord", values.keyWord);
-      formdata.append("IsActive", values.IsActive);
-      formdata.append("Title", values.Title);
-
-      createBannerImages(formdata)
-        .then((res) => {
-          setmodal_list(!modal_list);
-          setValues(initialState);
-          setCheckImagePhoto(false);
-          setIsSubmit(false);
-          setFormErrors({});
-          setPhotoAdd("");
-
-          fetchCategories();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
+    const handleClick = async (e) => {
+      e.preventDefault();
+      setFormErrors({});
+      let errors = validate(values);
+      setFormErrors(errors);
+      setIsSubmit(true);
+    
+      if (Object.keys(errors).length === 0) {
+        const formData = new FormData();
+    
+        if (completedCrop && previewCanvasRef.current) {
+          const canvas = previewCanvasRef.current;
+          await new Promise((resolve) => {
+            canvas.toBlob(blob => {
+              formData.append("myFile", blob, 'filename.png');
+              resolve();
+            });
+          });
+        } else if (imgSrc) {
+          formData.append("myFile", imgSrc);
+        }
+    
+        formData.append("Description", values.Description);
+        formData.append("keyWord", values.keyWord);
+        formData.append("IsActive", values.IsActive);
+        formData.append("Title", values.Title);
+    
+        for (let [key, value] of formData.entries()) {
+          console.log(key, value);
+        }
+    
+        createBannerImages(formData)
+          .then((res) => {
+            setmodal_list(!modal_list);
+            setValues(initialState);
+            setIsSubmit(false);
+            setFormErrors({});
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+    };
+    
+    
 
   const handleDelete = (e) => {
     e.preventDefault();
@@ -186,22 +214,112 @@ const Banner = () => {
       });
   };
 
-  const handleUpdate = (e) => {
+
+  const onSelectFile = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        const image = new Image();
+        image.src = reader.result.toString();
+        image.onload = function () {
+          const { naturalWidth, naturalHeight } = this;
+          if (naturalWidth < MIN_DIMENSION || naturalHeight < MIN_DIMENSION) {
+            setError("Image must be at least 150 x 150 pixels.");
+            setImgSrc("");
+          } else {
+            setError("");
+            setImgSrc(this.src);
+          }
+        };
+      });
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const onImageLoad = (e) => {
+    const { width, height } = e.currentTarget;
+    setCrop(centerAspectCrop(width, height, ASPECT_RATIO));
+  };
+
+  useEffect(() => {
+    if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
+      return;
+    }
+
+    const image = imgRef.current;
+    const canvas = previewCanvasRef.current;
+    const crop = completedCrop;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+    const pixelRatio = window.devicePixelRatio;
+
+    canvas.width = crop.width * pixelRatio * scaleX;
+    canvas.height = crop.height * pixelRatio * scaleY;
+
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    ctx.imageSmoothingQuality = "high";
+
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      crop.width * scaleX,
+      crop.height * scaleY
+    );
+  }, [completedCrop]);
+
+  const centerAspectCrop = (mediaWidth, mediaHeight, aspect) => {
+    return centerCrop(
+      makeAspectCrop(
+        {
+          unit: "%",
+          width: 90,
+        },
+        aspect,
+        mediaWidth,
+        mediaHeight
+      ),
+      mediaWidth,
+      mediaHeight
+    );
+  };
+
+  const handleUpdate = async (e) => {
     e.preventDefault();
     let erros = validate(values);
     setFormErrors(erros);
     setIsSubmit(true);
 
     if (Object.keys(erros).length === 0) {
-      const formdata = new FormData();
+      const formData = new FormData();
 
-      formdata.append("myFile", values.bannerImage);
-      formdata.append("Description", values.Description);
-      formdata.append("keyWord", values.keyWord);
-      formdata.append("IsActive", values.IsActive);
-      formdata.append("Title", values.Title);
+      if (completedCrop && previewCanvasRef.current) {
+        const canvas = previewCanvasRef.current;
+        await new Promise((resolve) => {
+          canvas.toBlob(blob => {
+            formData.append("myFile", blob, 'filename.png');
+            resolve();
+          });
+        });
+      } else if (imgSrc) {
+        formData.append("myFile", imgSrc);
+      }
+  
+      formData.append("Description", values.Description);
+      formData.append("keyWord", values.keyWord);
+      formData.append("IsActive", values.IsActive);
+      formData.append("Title", values.Title);
 
-      updateBannerImages(_id, formdata)
+      updateBannerImages(_id, formData)
         .then((res) => {
           setmodal_edit(!modal_edit);
           fetchCategories();
@@ -453,6 +571,8 @@ const Banner = () => {
           toggle={() => {
             setmodal_list(false);
             setIsSubmit(false);
+            setCompletedCrop(null);
+            setImgSrc(null);
           }}
         >
           Add Banner
@@ -505,31 +625,19 @@ const Banner = () => {
             </div>
 
             <Col lg={6}>
-              <label>
-                Banner Image <span className="text-danger">*</span>
-              </label>
-
-              <input
-                type="file"
-                name="bannerImage"
-                className={validClassBI}
-                // accept="images/*"
-                accept=".jpg, .jpeg, .png"
-                onChange={PhotoUpload}
-              />
-              {isSubmit && (
-                <p className="text-danger">{formErrors.bannerImage}</p>
-              )}
-              {checkImagePhoto ? (
-                <img
-                  //   src={image ?? myImage}
-                  className="m-2"
-                  src={photoAdd}
-                  alt="Profile"
-                  width="300"
-                  height="200"
-                />
-              ) : null}
+            <div className="mb-3">
+                  <Label className="form-label">Banner Image</Label>
+                  <input type="file" name="bannerImage" accept="image/*" onChange={onSelectFile} />
+                  {imgSrc && (
+                    <div>
+                      <ReactCrop crop={crop} onChange={(_, percentCrop) => setCrop(percentCrop)} onComplete={(c) => setCompletedCrop(c)} aspect={ASPECT_RATIO}>
+                        <img ref={imgRef} alt="Crop me" src={imgSrc} onLoad={onImageLoad} />
+                      </ReactCrop>
+                      <canvas ref={previewCanvasRef} style={{ border: "1px solid black", objectFit: "contain", width: completedCrop?.width ?? 0, height: completedCrop?.height ?? 0 }} />
+                    </div>
+                  )}
+                  <p className="text-danger">{formErrors.bannerImage}</p>
+                </div>
             </Col>
 
             <div className="form-check mb-2">
@@ -562,6 +670,7 @@ const Banner = () => {
                   setIsSubmit(false);
                   setCheckImagePhoto(false);
                   setPhotoAdd("");
+                  setImgSrc(null);
                 }}
               >
                 Cancel
@@ -636,35 +745,19 @@ const Banner = () => {
             </div>
 
             <Col lg={6}>
-              <label>
-                Banner Image <span className="text-danger">*</span>
-              </label>
-              <input
-                key={"bannerImage" + _id}
-                type="file"
-                name="bannerImage"
-                className={validClassBI}
-                // accept="images/*"
-                accept=".jpg, .jpeg, .png"
-                onChange={PhotoUpload}
-              />
-              {isSubmit && (
-                <p className="text-danger">{formErrors.bannerImage}</p>
-              )}
-
-              {values.bannerImage || photoAdd ? (
-                <img
-                  // key={photoAdd}
-                  className="m-2"
-                  src={
-                    checkImagePhoto
-                      ? photoAdd
-                      : `${process.env.REACT_APP_API_URL_COFFEE}/${values.bannerImage}`
-                  }
-                  width="300"
-                  height="200"
-                />
-              ) : null}
+            <div className="mb-3">
+                  <Label className="form-label">Banner Image</Label>
+                  <input type="file" name="bannerImage" accept="image/*" onChange={onSelectFile} />
+                  {imgSrc && (
+                    <div>
+                      <ReactCrop crop={crop} onChange={(_, percentCrop) => setCrop(percentCrop)} onComplete={(c) => setCompletedCrop(c)} aspect={ASPECT_RATIO}>
+                        <img ref={imgRef} alt="Crop me" src={imgSrc} onLoad={onImageLoad} />
+                      </ReactCrop>
+                      <canvas ref={previewCanvasRef} style={{ border: "1px solid black", objectFit: "contain", width: completedCrop?.width ?? 0, height: completedCrop?.height ?? 0 }} />
+                    </div>
+                  )}
+                  <p className="text-danger">{formErrors.bannerImage}</p>
+                </div>
             </Col>
 
             <div className="form-check mb-2">
