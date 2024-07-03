@@ -142,11 +142,11 @@ const VerticalLayout = (props) => {
                 Admin Users
               </Link>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <Link to="/#" className="nav-link">
                 Roles
               </Link>
-            </li>
+            </li> */}
 
             <li className="nav-item">
               <Link

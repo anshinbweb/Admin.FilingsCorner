@@ -33,6 +33,8 @@ import {
 } from "../../../functions/Location/Location";
 import axios from "axios";
 import DataTable from "react-data-table-component";
+import DeleteModal from "../../../Components/Common/DeleteModal";
+import FormsHeader from "../../../Components/Common/FormsModalHeader";
 
 const initialState = {
   CityName: "",
@@ -209,6 +211,11 @@ const City = () => {
         console.log(err);
       });
   };
+
+  const handleDeleteClose = (e) => {
+    e.preventDefault();
+    setmodal_delete(false);
+  }
 
   const validate = (values) => {
     const errors = {};
@@ -391,48 +398,13 @@ const City = () => {
             <Col lg={12}>
               <Card>
                 <CardHeader>
-                  <Row className="g-4 mb-1">
-                    <Col className="col-sm" lg={4} md={6} sm={6}>
-                      <h2 className="card-title mb-0 fs-4 mt-2">City </h2>
-                    </Col>
-                    <Col lg={4} md={6} sm={6}>
-                      <div className="text-end mt-2">
-                        <Input
-                          type="checkbox"
-                          className="form-check-input"
-                          name="filter"
-                          value={filter}
-                          defaultChecked={true}
-                          onChange={handleFilter}
-                        />
-                        <Label className="form-check-label ms-2">Active</Label>
-                      </div>
-                    </Col>
-                    <Col className="col-sm-auto" lg={4} md={6} sm={6}>
-                      <div className="d-flex justify-content-sm-end">
-                        <div className="ms-2">
-                          <Button
-                            color="success"
-                            className="add-btn me-1"
-                            onClick={() => tog_list()}
-                            id="create-btn"
-                          >
-                            <i className="ri-add-line align-bottom me-1"></i>
-                            Add
-                          </Button>
-                        </div>
-                        <div className="search-box ms-2">
-                          <input
-                            type="text"
-                            className="form-control search"
-                            placeholder="Search..."
-                            onChange={(e) => setQuery(e.target.value)}
-                          />
-                          <i className="ri-search-line search-icon"></i>
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
+                <FormsHeader
+                    formName="City"
+                    filter={filter}
+                    handleFilter={handleFilter}
+                    tog_list={tog_list}
+                    setQuery={setQuery}
+                  />
                 </CardHeader>
 
                 <CardBody>
@@ -696,61 +668,12 @@ const City = () => {
         </form>
       </Modal>
 
-      {/* Remove Modal */}
-      <Modal
-        isOpen={modal_delete}
-        toggle={() => {
-          setmodal_delete(!modal_delete);
-        }}
-        centered
-      >
-        <ModalHeader
-          className="bg-light p-3"
-          toggle={() => {
-            setmodal_delete(false);
-          }}
-        >
-          Remove City
-        </ModalHeader>
-        <form>
-          <ModalBody>
-            <div className="mt-2 text-center">
-              <lord-icon
-                src="https://cdn.lordicon.com/gsqxdxog.json"
-                trigger="loop"
-                colors="primary:#f7b84b,secondary:#f06548"
-                style={{ width: "100px", height: "100px" }}
-              ></lord-icon>
-              <div className="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                <h4>Are you sure ?</h4>
-                <p className="text-muted mx-4 mb-0">
-                  Are you Sure You want to Remove this Record ?
-                </p>
-              </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-danger"
-                id="add-btn"
-                onClick={handleDelete}
-              >
-                Remove
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => setmodal_delete(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </ModalFooter>
-        </form>
-      </Modal>
+      <DeleteModal
+        show={modal_delete}
+        handleDelete={handleDelete}
+        toggle={handleDeleteClose}
+        setmodal_delete={setmodal_delete}
+      />
     </React.Fragment>
   );
 };

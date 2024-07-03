@@ -26,6 +26,8 @@ import {
   removeCategory,
   updateCategory,
 } from "../../functions/Category/CategoryMaster";
+import DeleteModal from "../../Components/Common/DeleteModal";
+import FormsHeader from "../../Components/Common/FormsModalHeader";
 
 const initialState = {
   categoryName: "",
@@ -38,7 +40,7 @@ const CategoryMaster = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
   const [filter, setFilter] = useState(true);
- 
+
   const [errCN, setErrCN] = useState(false);
 
   const [query, setQuery] = useState("");
@@ -103,27 +105,27 @@ const CategoryMaster = () => {
     setFormErrors(erros);
     setIsSubmit(true);
 
-      createCategory(values)
-        .then((res) => {
-          setmodal_list(!modal_list);
-            setValues(initialState);
-            fetchCategories();
-          // if (res.isOk) {
-          //   setmodal_list(!modal_list);
-          //   setValues(initialState);
-          //   fetchCategories();
-          // } else {
-          //   if (res.field === 1) {
-          //     setErrCN(true);
-          //     setFormErrors({
-          //       categoryName: "This Category name is already exists!",
-          //     });
-          //   }
-          // }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    createCategory(values)
+      .then((res) => {
+        setmodal_list(!modal_list);
+        setValues(initialState);
+        fetchCategories();
+        // if (res.isOk) {
+        //   setmodal_list(!modal_list);
+        //   setValues(initialState);
+        //   fetchCategories();
+        // } else {
+        //   if (res.field === 1) {
+        //     setErrCN(true);
+        //     setFormErrors({
+        //       categoryName: "This Category name is already exists!",
+        //     });
+        //   }
+        // }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const handleDelete = (e) => {
@@ -136,6 +138,11 @@ const CategoryMaster = () => {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const handleDeleteClose = (e) => {
+    e.preventDefault();
+    setmodal_delete(false);
   };
 
   const handleUpdate = (e) => {
@@ -306,49 +313,13 @@ const CategoryMaster = () => {
             <Col lg={12}>
               <Card>
                 <CardHeader>
-                  <Row className="g-4 mb-1">
-                    <Col className="col-sm" sm={6} lg={4} md={6}>
-                      <h2 className="card-title mb-0 fs-4 mt-2">Products Category</h2>
-                    </Col>
-
-                    <Col sm={6} lg={4} md={6}>
-                      <div className="text-end mt-2">
-                        <Input
-                          type="checkbox"
-                          className="form-check-input"
-                          name="filter"
-                          value={filter}
-                          defaultChecked={true}
-                          onChange={handleFilter}
-                        />
-                        <Label className="form-check-label ms-2">Active</Label>
-                      </div>
-                    </Col>
-                    <Col className="col-sm-auto" sm={12} lg={4} md={12}>
-                      <div className="d-flex justify-content-sm-end">
-                        <div className="ms-2">
-                          <Button
-                            color="success"
-                            className="add-btn me-1"
-                            onClick={() => tog_list()}
-                            id="create-btn"
-                          >
-                            <i className="ri-add-line align-bottom me-1"></i>
-                            Add
-                          </Button>
-                        </div>
-                        <div className="search-box ms-2">
-                          <input
-                            type="text"
-                            className="form-control search"
-                            placeholder="Search..."
-                            onChange={(e) => setQuery(e.target.value)}
-                          />
-                          <i className="ri-search-line search-icon"></i>
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
+                  <FormsHeader
+                    formName="Products Category"
+                    filter={filter}
+                    handleFilter={handleFilter}
+                    tog_list={tog_list}
+                    setQuery={setQuery}
+                  />
                 </CardHeader>
 
                 <CardBody>
@@ -407,7 +378,9 @@ const CategoryMaster = () => {
                 value={categoryName}
                 onChange={handleChange}
               />
-              <Label>Category Name <span className="text-danger">*</span></Label>
+              <Label>
+                Category Name <span className="text-danger">*</span>
+              </Label>
               {isSubmit && (
                 <p className="text-danger">{formErrors.categoryName}</p>
               )}
@@ -479,7 +452,9 @@ const CategoryMaster = () => {
                 value={categoryName}
                 onChange={handleChange}
               />
-              <Label>Category Name <span className="text-danger">*</span></Label>
+              <Label>
+                Category Name <span className="text-danger">*</span>
+              </Label>
               {isSubmit && (
                 <p className="text-danger">{formErrors.categoryName}</p>
               )}
@@ -526,7 +501,7 @@ const CategoryMaster = () => {
       </Modal>
 
       {/* Remove Modal */}
-      <Modal
+      {/* <Modal
         isOpen={modal_delete}
         toggle={() => {
           tog_delete();
@@ -579,7 +554,14 @@ const CategoryMaster = () => {
             </div>
           </ModalFooter>
         </form>
-      </Modal>
+      </Modal> */}
+
+      <DeleteModal
+        show={modal_delete}
+        handleDelete={handleDelete}
+        toggle={handleDeleteClose}
+        setmodal_delete={setmodal_delete}
+      />
     </React.Fragment>
   );
 };
