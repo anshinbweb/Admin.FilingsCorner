@@ -26,6 +26,8 @@ import {
   updateProductsDetails,
 } from "../../functions/Products/ProductsDetails";
 import { listCategory } from "../../functions/Category/CategoryMaster";
+import DeleteModal from "../../Components/Common/DeleteModal";
+import FormsHeader from "../../Components/Common/FormsHeader";
 
 const ProductDetails = () => {
   const [formErrors, setFormErrors] = useState({});
@@ -61,7 +63,7 @@ const ProductDetails = () => {
     price,
     IsActive,
     IsSubscriptionProduct,
-    isOutOfStock
+    isOutOfStock,
   } = values;
 
   const [loading, setLoading] = useState(false);
@@ -198,10 +200,6 @@ const ProductDetails = () => {
     if (values.productName !== "") {
       setErrPN(false);
     }
-
-  
-
- 
 
     if (values.productImage === "") {
       errors.productImage = "Product Image is required";
@@ -345,6 +343,11 @@ const ProductDetails = () => {
       });
   };
 
+  const handleDeleteClose = (e) => {
+    e.preventDefault();
+    setmodal_delete(false);
+  };
+
   const handleUpdate = (e) => {
     e.preventDefault();
 
@@ -355,14 +358,14 @@ const ProductDetails = () => {
     const formdata = new FormData();
 
     formdata.append("myFile", values.productImage);
-      formdata.append("category", values.category);
-      formdata.append("productName", values.productName);
-      formdata.append("productDescription", values.productDescription);
-      formdata.append("IsActive", values.IsActive);
-      formdata.append("IsGiftHamper", values.IsGiftHamper);
-      formdata.append("IsSubscriptionProduct", values.IsSubscriptionProduct);
-      formdata.append("isOutOfStock", values.isOutOfStock);
-      formdata.append("price", values.price);
+    formdata.append("category", values.category);
+    formdata.append("productName", values.productName);
+    formdata.append("productDescription", values.productDescription);
+    formdata.append("IsActive", values.IsActive);
+    formdata.append("IsGiftHamper", values.IsGiftHamper);
+    formdata.append("IsSubscriptionProduct", values.IsSubscriptionProduct);
+    formdata.append("isOutOfStock", values.isOutOfStock);
+    formdata.append("price", values.price);
     updateProductsDetails(_id, formdata)
       .then((res) => {
         // setmodal_edit(!modal_edit);
@@ -481,115 +484,23 @@ const ProductDetails = () => {
             title="Product Details"
             pageTitle="Product Master"
           />
-
           <Row>
             <Col lg={12}>
               <Card>
                 <CardHeader>
-                  <Row className="g-4 mb-1">
-                    <Col className="col-sm" lg={4} md={6} sm={6}>
-                      <h2 className="card-title mb-0 fs-4 mt-2">
-                        Product Details
-                      </h2>
-                    </Col>
-                    <Col lg={4} md={6} sm={6}>
-                      <div
-                        style={{
-                          display: showForm || updateForm ? "none" : "",
-                        }}
-                      >
-                        <div className="text-end mt-1">
-                          <Input
-                            type="checkbox"
-                            className="form-check-input"
-                            name="filter"
-                            value={filter}
-                            defaultChecked={true}
-                            onChange={handleFilter}
-                          />
-                          <Label className="form-check-label ms-2">
-                            Active
-                          </Label>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col className="col-sm-auto" lg={4} md={12} sm={12}>
-                      <div className="d-flex justify-content-sm-end">
-                        {/* add btn */}
-                        <div
-                          style={{
-                            display: showForm || updateForm ? "none" : "",
-                          }}
-                        >
-                          <Row>
-                            <Col lg={12}>
-                              <div className="d-flex justify-content-sm-end">
-                                <div>
-                                  <Button
-                                    color="success"
-                                    className="add-btn me-1"
-                                    onClick={() => {
-                                      setShowForm(!showForm);
-                                      setValues(initialState);
-                                      // setFileId(Math.random() * 100000);
-                                    }}
-                                    // onClick={() => tog_list()}
-                                    // id="create-btn"
-                                  >
-                                    <i className="ri-add-line align-bottom me-1"></i>
-                                    Add
-                                  </Button>
-                                </div>
-                              </div>
-                            </Col>
-                          </Row>
-                        </div>
-
-                        {/* update list btn */}
-
-                        <div
-                          style={{
-                            display: showForm || updateForm ? "" : "none",
-                          }}
-                        >
-                          <Row>
-                            <Col lg={12}>
-                              <div className="text-end">
-                                <button
-                                  className="btn bg-success text-light mb-3 "
-                                  onClick={() => {
-                                    setValues(initialState);
-                                    setShowForm(false);
-                                    setUpdateForm(false);
-                                    // setFileId(Math.random() * 100000);
-                                  }}
-                                >
-                                  <i class="ri-list-check align-bottom me-1"></i>{" "}
-                                  List
-                                </button>
-                              </div>
-                            </Col>
-                          </Row>
-                          {/* </div> */}
-                        </div>
-
-                        {/* search */}
-                        <div
-                          className="search-box ms-2"
-                          style={{
-                            display: showForm || updateForm ? "none" : "",
-                          }}
-                        >
-                          <input
-                            className="form-control search"
-                            placeholder="Search..."
-                            onChange={(e) => setQuery(e.target.value)}
-                          />
-                          <i className="ri-search-line search-icon "></i>
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
+                  <FormsHeader
+                    formName="Product Details"
+                    filter={filter}
+                    handleFilter={handleFilter}
+                    tog_list={tog_list}
+                    setQuery={setQuery}
+                    initialState={initialState}
+                    setValues={setValues}
+                    updateForm={updateForm}
+                    showForm={showForm}
+                    setShowForm={setShowForm}
+                    setUpdateForm={setUpdateForm}
+                  />
                 </CardHeader>
 
                 {/* ADD FORM  */}
@@ -622,11 +533,9 @@ const ProductDetails = () => {
                                           {drinkCategories.map((c) => {
                                             return (
                                               <React.Fragment key={c._id}>
-                                                {c.IsActive && (
                                                   <option value={c._id}>
                                                     {c.categoryName}
                                                   </option>
-                                                )}
                                               </React.Fragment>
                                             );
                                           })}
@@ -686,11 +595,10 @@ const ProductDetails = () => {
                                           Price
                                           <span className="text-danger">*</span>
                                         </label>
-                                       
                                       </div>
                                     </Col>
                                   </Row>
-                                 
+
                                   <Col>
                                     <div className="form-floating mb-3">
                                       <input
@@ -777,8 +685,6 @@ const ProductDetails = () => {
                                     </div>
                                   </Col>
 
-                                 
-
                                   <div className="mt-5">
                                     <Col lg={6}>
                                       <div className="form-check mb-2">
@@ -853,15 +759,13 @@ const ProductDetails = () => {
                                           data-choices
                                           data-choices-sorting="true"
                                         >
-                                          <option>Select Category</option>
+                                          {/* <option>Select Category</option> */}
                                           {drinkCategories.map((c) => {
                                             return (
                                               <React.Fragment key={c._id}>
-                                                {c.IsActive && (
                                                   <option value={c._id}>
                                                     {c.categoryName}
                                                   </option>
-                                                )}
                                               </React.Fragment>
                                             );
                                           })}
@@ -920,11 +824,10 @@ const ProductDetails = () => {
                                           Price
                                           <span className="text-danger">*</span>
                                         </label>
-                                       
                                       </div>
                                     </Col>
                                   </Row>
-                                  
+
                                   <Col lg={6}>
                                     <div className="form-floating mb-3 mt-4">
                                       <input
@@ -1018,7 +921,6 @@ const ProductDetails = () => {
                                     </div>
                                   </Col>
 
-                                 
                                   <div className="mt-5">
                                     <Col lg={6}>
                                       <div className="form-check mb-2">
@@ -1107,70 +1009,12 @@ const ProductDetails = () => {
         </Container>
       </div>
 
-      {/*Remove Modal*/}
-      <Modal
-        isOpen={modal_delete}
-        toggle={() => {
-          tog_delete();
-          setValues([]);
-        }}
-        centered
-      >
-        <ModalHeader
-          className="bg-light p-3"
-          toggle={() => {
-            setmodal_delete(!modal_delete);
-          }}
-        >
-          <span style={{ marginRight: "210px" }}>Remove Product</span>
-          {/* <Button
-            type="button"
-            onClick={() => {
-              setmodal_delete(false);
-            }}
-            className="btn-close"
-            aria-label="Close"
-          ></Button> */}
-        </ModalHeader>
-
-        <form>
-          <ModalBody>
-            <div className="mt-2 text-center">
-              <lord-icon
-                src="https://cdn.lordicon.com/gsqxdxog.json"
-                trigger="loop"
-                colors="primary:#f7b84b,secondary:#f06548"
-                style={{ width: "100px", height: "100px" }}
-              ></lord-icon>
-              <div className="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                <h4>Are you sure ?</h4>
-                <p className="text-muted mx-4 mb-0">
-                  Are you Sure You want to Remove this Record ?
-                </p>
-              </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-danger"
-                id="add-btn"
-                onClick={handleDelete}
-              >
-                Remove
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => setmodal_delete(false)}
-              >
-                Close
-              </button>
-            </div>
-          </ModalFooter>
-        </form>
-      </Modal>
+      <DeleteModal
+        show={modal_delete}
+        handleDelete={handleDelete}
+        toggle={handleDeleteClose}
+        setmodal_delete={setmodal_delete}
+      />
     </React.Fragment>
   );
 };

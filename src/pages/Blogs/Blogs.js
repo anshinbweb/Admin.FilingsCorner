@@ -31,6 +31,7 @@ import {
   updateBlogs,
   uploadImage,
 } from "../../functions/Blogs/Blogs";
+import DeleteModal from "../../Components/Common/DeleteModal";
 
 const Blogs = () => {
   const [blogTitle, setblogTitle] = useState("");
@@ -187,6 +188,11 @@ const Blogs = () => {
         console.log(err);
       });
   };
+
+  const handleDeleteClose = (e) => {
+    e.preventDefault();
+    setmodal_delete(false);
+  }
 
   const handleUpdate = (e) => {
     e.preventDefault();
@@ -1054,69 +1060,12 @@ const Blogs = () => {
         </Container>
       </div>
 
-      {/*Remove Modal*/}
-      <Modal
-        isOpen={modal_delete}
-        toggle={() => {
-          tog_delete();
-          // setValues([]);
-          setblogDesc("");
-          setblogTitle("");
-          setlikes([]);
-          setcomments([]);
-          setuserId("");
-          setIsActive(false);
-          setblogImage("");
-        }}
-        centered
-      >
-        <ModalHeader
-          className="bg-light p-3"
-          toggle={() => {
-            setmodal_delete(!modal_delete);
-          }}
-        >
-          <span style={{ marginRight: "210px" }}>Remove Blog</span>
-        </ModalHeader>
-
-        <form>
-          <ModalBody>
-            <div className="mt-2 text-center">
-              <lord-icon
-                src="https://cdn.lordicon.com/gsqxdxog.json"
-                trigger="loop"
-                colors="primary:#f7b84b,secondary:#f06548"
-                style={{ width: "100px", height: "100px" }}
-              ></lord-icon>
-              <div className="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
-                <h4>Are you sure ?</h4>
-                <p className="text-muted mx-4 mb-0">
-                  Are you Sure You want to Remove this Record ?
-                </p>
-              </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <div className="hstack gap-2 justify-content-end">
-              <button
-                type="submit"
-                className="btn btn-danger"
-                id="add-btn"
-                onClick={handleDelete}
-              >
-                Remove
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={() => setmodal_delete(false)}
-              >
-                Close
-              </button>
-            </div>
-          </ModalFooter>
-        </form>
-      </Modal>
+      <DeleteModal
+        show={modal_delete}
+        handleDelete={handleDelete}
+        toggle={handleDeleteClose}
+        setmodal_delete={setmodal_delete}
+      />
     </React.Fragment>
   );
 };

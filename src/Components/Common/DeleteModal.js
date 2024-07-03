@@ -1,10 +1,18 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { Modal, ModalBody } from "reactstrap";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
-const DeleteModal = ({ show, onDeleteClick, onCloseClick }) => {
+const DeleteModal = ({ show, handleDelete, handleDeleteClose, setmodal_delete }) => {
   return (
-    <Modal fade={true} isOpen={show} toggle={onCloseClick} centered={true}>
+    <Modal fade={true} isOpen={show} toggle={handleDeleteClose} centered={true}>
+       <ModalHeader
+          className="bg-light p-3"
+          toggle={() => {
+            setmodal_delete(false);
+          }}
+        >
+          Remove Category
+        </ModalHeader>
       <ModalBody className="py-3 px-5">
         <div className="mt-2 text-center">
           <lord-icon
@@ -20,7 +28,7 @@ const DeleteModal = ({ show, onDeleteClick, onCloseClick }) => {
             </p>
           </div>
         </div>
-        <div className="d-flex gap-2 justify-content-center mt-4 mb-2">
+        {/* <div className="d-flex gap-2 justify-content-center mt-4 mb-2">
           <button
             type="button"
             className="btn w-sm btn-light"
@@ -37,8 +45,28 @@ const DeleteModal = ({ show, onDeleteClick, onCloseClick }) => {
           >
             Yes, Delete It!
           </button>
-        </div>
+        </div> */}
       </ModalBody>
+      <ModalFooter>
+            <div className="hstack gap-2 justify-content-end">
+              <button
+                type="submit"
+                className="btn btn-danger"
+                id="add-btn"
+                onClick={handleDelete}
+              >
+                Remove
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={() => setmodal_delete(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </ModalFooter>
     </Modal>
   );
 };

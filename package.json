@@ -167,6 +167,7 @@
     "autoprefixer": "10.4.5"
   },
   "devDependencies": {
+    "ajv": "^7.2.4",
     "babel-plugin-prismjs": "^2.1.0"
   }
 }
