@@ -13,6 +13,16 @@
   }
 }
 
+/* .google-trans {
+  position: relative;
+  top: 0;
+  z-index: 999;
+  pointer-events: all;
+  right: 170px;
+  border-radius: 5px;
+  background: #fff;
+} */
+
 .newsletter-popup {
   width: 300px;
   font-size: 35px;

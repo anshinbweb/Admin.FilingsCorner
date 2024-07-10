@@ -7,11 +7,13 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 
 import { configureStore } from "./store";
+import GoogleTranslate from './Components/Common/GoogleTranslate';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={configureStore({})}>
     <React.Fragment>
+       <GoogleTranslate/>
       <BrowserRouter basename={process.env.PUBLIC_URL}>
         <App />
       </BrowserRouter>
