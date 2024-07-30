@@ -262,7 +262,7 @@ const CategoryMaster = () => {
   };
   const col = [
     {
-      name: "Category Name",
+      name: "Category ",
       selector: (row) => row.categoryName,
       sortable: true,
       sortField: "categoryName",
@@ -313,7 +313,7 @@ const CategoryMaster = () => {
     },
   ];
 
-  document.title = "Products Category | Project Name";
+  document.title = " Category | Data Insights";
 
   return (
     <React.Fragment>
@@ -321,7 +321,7 @@ const CategoryMaster = () => {
         <Container fluid>
           <BreadCrumb
             maintitle="Category"
-            title="Products Category"
+            title=" Category"
             pageTitle="Category"
           />
           <Row>

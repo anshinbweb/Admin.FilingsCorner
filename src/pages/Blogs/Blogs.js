@@ -46,7 +46,7 @@ const Blogs = () => {
 
   const [likes, setlikes] = useState([]);
   const [comments, setcomments] = useState([]);
-  const [userId, setuserId] = useState(localStorage.getItem("AdminUser"));
+  const [userId, setuserId] = useState(localStorage.getItem("DataInsightsAdminUser"));
   const [IsActive, setIsActive] = useState(false);
 
   const [formErrors, setFormErrors] = useState({});
@@ -497,7 +497,7 @@ const Blogs = () => {
     },
   ];
 
-  document.title = "Blogs | Project Name";
+  document.title = "Blogs | Data Insights";
 
   return (
     <React.Fragment>

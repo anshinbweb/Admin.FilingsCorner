@@ -6,7 +6,7 @@ import logoSm from "../assets/images/logo-sm.png";
 import logoDark from "../assets/images/logo-dark.png";
 import logoLight from "../assets/images/logo-light.png";
 
-import logo from "../assets/images/logo/RC-logo-png.png";
+import logo from "../assets/images/logo/logo.png";
 
 //Import Components
 import VerticalLayout from "./VerticalLayouts";

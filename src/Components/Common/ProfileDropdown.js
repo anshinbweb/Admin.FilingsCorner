@@ -9,7 +9,7 @@ import {
 
 //import images
 import avatar1 from "../../assets/images/users/avatar-1.jpg";
-import logo from "../../assets/images/logo/RC-logo-png.png";
+import logo from "../../assets/images/logo/logo.png";
 
 const ProfileDropdown = () => {
   const { user } = useSelector((state) => ({
@@ -17,7 +17,7 @@ const ProfileDropdown = () => {
   }));
 
   const handleLogout = () => {
-    localStorage.removeItem("AdminUser");
+    localStorage.removeItem("DataInsightsAdminUser");
     window.location.replace("/");
   };
 
@@ -63,7 +63,7 @@ const ProfileDropdown = () => {
             <span className="text-start ms-xl-2">
               <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
                 {/* {userName} */}
-                Project Name
+                Data Insights
               </span>
               {/* <span className="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">Founder</span> */}
             </span>

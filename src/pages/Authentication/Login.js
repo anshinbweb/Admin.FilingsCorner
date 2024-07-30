@@ -8,26 +8,16 @@ import {
   Label,
   Row,
   Button,
-  Form,
-  FormFeedback,
-  // Alert,
 } from "reactstrap";
 import { Alert } from "react-bootstrap";
 
-import logo from "../../assets/images/logo/RC-logo-png.png";
+import logo from "../../assets/images/logo/logo.png";
 
 import { ToastContainer, toast } from "react-toastify";
 //redux
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { Link } from "react-router-dom";
-
-// Formik validation
-import * as Yup from "yup";
-import { useFormik } from "formik";
-
-// actions
-import { loginUser, socialLogin, resetLoginFlag } from "../../store/actions";
 
 import withRouter from "../../Components/Common/withRouter";
 import axios from "axios";
@@ -63,7 +53,7 @@ const Login = (props) => {
         if (res.isOk) {
           console.log(" login", res);
 
-          localStorage.setItem("AdminUser", res.data._id);
+          localStorage.setItem("DataInsightsAdminUser", res.data._id);
 
           window.location.replace("/admin-user");
         } else {
@@ -105,7 +95,7 @@ const Login = (props) => {
   const validClassPassword =
     errPassword && isSubmit ? "form-control is-invalid" : "form-control pe-5";
 
-  document.title = " SignIn | Project Name ";
+  document.title = " SignIn | Data Insights ";
   return (
     <React.Fragment>
       {/* <ParticlesAuth> */}
@@ -137,7 +127,7 @@ const Login = (props) => {
                             src={logo}
                             height={"70px"}
                             width={"80px"}
-                            alt="Project Name"
+                            alt="Data Insights"
                           />
                         </Link>
                       </div>

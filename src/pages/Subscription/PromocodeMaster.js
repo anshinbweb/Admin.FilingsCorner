@@ -337,7 +337,7 @@ const PromocodeMaster = () => {
     },
   ];
 
-  document.title = "Promocode Master | Project Name";
+  document.title = "Promocode Master | Data Insights";
 
   return (
     <React.Fragment>

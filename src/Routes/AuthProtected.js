@@ -29,7 +29,7 @@ const AuthProtected = (props) => {
   //   );
   // }
 
-  if (!localStorage.getItem("AdminUser")) {
+  if (!localStorage.getItem("DataInsightsAdminUser")) {
     return <Navigate to="/" />;
 
   }

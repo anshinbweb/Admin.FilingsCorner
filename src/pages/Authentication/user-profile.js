@@ -8,11 +8,6 @@ import {
   Card,
   Alert,
   CardBody,
-  Button,
-  Label,
-  Input,
-  FormFeedback,
-  Form,
 } from "reactstrap";
 
 // Formik Validation
@@ -22,8 +17,7 @@ import { useFormik } from "formik";
 //redux
 import { useSelector, useDispatch } from "react-redux";
 
-import avatar from "../../assets/images/users/avatar-1.jpg";
-import logo from "../../assets/images/logo/RC-logo-png.png";
+import logo from "../../assets/images/logo/logo.png";
 
 // actions
 import { editProfile, resetProfileFlag } from "../../store/actions";
@@ -31,10 +25,10 @@ import { editProfile, resetProfileFlag } from "../../store/actions";
 const UserProfile = () => {
   const dispatch = useDispatch();
 
-  const [email, setemail] = useState("admin@rccoffee.in");
+  const [email, setemail] = useState("admin@gmail.com");
   const [idx, setidx] = useState("1");
 
-  const [userName, setUserName] = useState("Project Name");
+  const [userName, setUserName] = useState("Data Insights");
 
   const { user, success, error } = useSelector(state => ({
     user: state.Profile.user,
@@ -80,7 +74,7 @@ const UserProfile = () => {
     }
   });
 
-  document.title = "Profile | Project Name";
+  document.title = "Profile | Data Insights";
   return (
     <React.Fragment>
       <div className="page-content">

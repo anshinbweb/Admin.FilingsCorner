@@ -361,7 +361,7 @@ const AdminUser = () => {
     },
   ];
 
-  document.title = "Admin Users | Project Name";
+  document.title = "Admin Users | Data Insights";
 
   return (
     <React.Fragment>

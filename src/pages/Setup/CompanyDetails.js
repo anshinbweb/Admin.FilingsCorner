@@ -648,7 +648,7 @@ const CompanyDetails = () => {
       minWidth: "180px",
     },
   ];
-  document.title = "Company Details | Project Name";
+  document.title = "Company Details | Data Insights";
 
   return (
     <React.Fragment>
