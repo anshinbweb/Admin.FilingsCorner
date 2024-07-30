@@ -401,7 +401,7 @@ const City = () => {
     },
   ];
 
-  document.title = "City | Data Insights";
+  document.title = "City | Project Name";
   return (
     <React.Fragment>
       <UiContent />

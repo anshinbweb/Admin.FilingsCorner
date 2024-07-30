@@ -41,10 +41,10 @@ const ProductDetails = () => {
     productName: "",
     productImage: "",
     productDescription: "",
-    // price: 0,
+    price: 0,
     IsActive: false,
-    // IsSubscriptionProduct: false,
-    // isOutOfStock: false,
+    IsSubscriptionProduct: false,
+    isOutOfStock: false,
   };
 
   const [remove_id, setRemove_id] = useState("");
@@ -80,20 +80,27 @@ const ProductDetails = () => {
 
   const columns = [
     {
-      name: " Category",
-      selector: (row) => row.category?.categoryName,
+      name: "Product Category",
+      selector: (row) => row.category.categoryName,
       sortable: true,
       sortField: "row.category.categoryName",
       minWidth: "150px",
     },
     {
-      name: "Complain",
+      name: "Product Name",
       selector: (row) => row.productName,
       sortable: true,
       sortField: "productName",
       minWidth: "150px",
     },
-    
+    {
+      name: "Subscription",
+      selector: (row) => {
+        return <p>{row.IsSubscriptionProduct ? "Yes" : "No"}</p>;
+      },
+      sortable: false,
+      sortField: "IsSubscriptionProduct",
+    },
     {
       name: "Action",
       selector: (row) => {
@@ -179,7 +186,7 @@ const ProductDetails = () => {
   const validate = (values) => {
     const errors = {};
     if (values.category === "") {
-      errors.category = "Select Category is required";
+      errors.category = "Category Name is required";
       setErrCN(true);
     }
     if (values.category !== "") {
@@ -187,7 +194,7 @@ const ProductDetails = () => {
     }
 
     if (values.productName === "") {
-      errors.productName = "Complain is required";
+      errors.productName = "Product Name is required";
       setErrPN(true);
     }
 
@@ -196,7 +203,7 @@ const ProductDetails = () => {
     }
 
     if (values.productImage === "") {
-      errors.productImage = " Image is required";
+      errors.productImage = "Product Image is required";
       setErrPI(true);
     }
 
@@ -298,6 +305,10 @@ const ProductDetails = () => {
       formdata.append("productName", values.productName);
       formdata.append("productDescription", values.productDescription);
       formdata.append("IsActive", values.IsActive);
+      formdata.append("IsGiftHamper", values.IsGiftHamper);
+      formdata.append("IsSubscriptionProduct", values.IsSubscriptionProduct);
+      formdata.append("isOutOfStock", values.isOutOfStock);
+      formdata.append("price", values.price);
 
       createProductsDetails(formdata)
         .then((res) => {
@@ -352,7 +363,10 @@ const ProductDetails = () => {
     formdata.append("productName", values.productName);
     formdata.append("productDescription", values.productDescription);
     formdata.append("IsActive", values.IsActive);
-   
+    formdata.append("IsGiftHamper", values.IsGiftHamper);
+    formdata.append("IsSubscriptionProduct", values.IsSubscriptionProduct);
+    formdata.append("isOutOfStock", values.isOutOfStock);
+    formdata.append("price", values.price);
     updateProductsDetails(_id, formdata)
       .then((res) => {
         // setmodal_edit(!modal_edit);
@@ -408,6 +422,10 @@ const ProductDetails = () => {
           productImage: res.productImage,
           productDescription: res.productDescription,
           IsActive: res.IsActive,
+          IsGiftHamper: res.IsGiftHamper,
+          IsSubscriptionProduct: res.IsSubscriptionProduct,
+          price: res.price,
+          isOutOfStock: res.isOutOfStock,
         });
       })
       .catch((err) => {
@@ -456,23 +474,23 @@ const ProductDetails = () => {
   const handleFilter = (e) => {
     setFilter(e.target.checked);
   };
-  document.title = "Insights | Data Insights";
+  document.title = "Product Details | Project Name";
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
           <BreadCrumb
-            maintitle="Insights"
-            title="Insights"
-            pageTitle="Insights"
+            maintitle="Product Master"
+            title="Product Details"
+            pageTitle="Product Master"
           />
           <Row>
             <Col lg={12}>
               <Card>
                 <CardHeader>
                   <FormsHeader
-                    formName="Insights"
+                    formName="Product Details"
                     filter={filter}
                     handleFilter={handleFilter}
                     tog_list={tog_list}
@@ -502,7 +520,7 @@ const ProductDetails = () => {
                               <Form>
                                 <Row>
                                   <Row>
-                                    <Col lg={3}>
+                                    <Col lg={6}>
                                       <div className="form-floating  mb-3">
                                         <select
                                           name="category"
@@ -524,7 +542,7 @@ const ProductDetails = () => {
                                           })}
                                         </select>
                                         <Label>
-                                           Category{" "}
+                                          Product Category{" "}
                                           <span className="text-danger">*</span>
                                         </Label>
                                         {isSubmit && (
@@ -534,12 +552,12 @@ const ProductDetails = () => {
                                         )}
                                       </div>
                                     </Col>
-                                    <Col lg={3}>
+                                    <Col lg={4}>
                                       <div className="form-floating mb-3">
                                         <input
                                           type="text"
                                           className={validClassPN}
-                                          placeholder=""
+                                          placeholder="Enter product name"
                                           required
                                           name="productName"
                                           value={values.productName}
@@ -549,7 +567,7 @@ const ProductDetails = () => {
                                           htmlFor="role-field"
                                           className="form-label"
                                         >
-                                          Complain
+                                          Product Name
                                           <span className="text-danger">*</span>
                                         </label>
                                         {isSubmit && (
@@ -560,10 +578,29 @@ const ProductDetails = () => {
                                       </div>
                                     </Col>
 
-                                    
+                                    <Col lg={2}>
+                                      <div className="form-floating mb-3">
+                                        <input
+                                          type="number"
+                                          className="form-control"
+                                          placeholder="Enter price"
+                                          required
+                                          name="price"
+                                          value={values.price}
+                                          onChange={handleChange}
+                                        />
+                                        <label
+                                          htmlFor="role-field"
+                                          className="form-label"
+                                        >
+                                          Price
+                                          <span className="text-danger">*</span>
+                                        </label>
+                                      </div>
+                                    </Col>
                                   </Row>
 
-                                  <Col lg={6} >
+                                  <Col>
                                     <div className="form-floating mb-3">
                                       <input
                                         type="textarea"
@@ -580,14 +617,13 @@ const ProductDetails = () => {
                                         htmlFor="role-field"
                                         className="form-label"
                                       >
-                                        Location
+                                        Description
                                       </label>
                                     </div>
                                   </Col>
-                                  <Row>
                                   <Col lg={6}>
                                     <label>
-                                       Image{" "}
+                                      Product Image{" "}
                                       <span className="text-danger">*</span>
                                     </label>
 
@@ -614,10 +650,41 @@ const ProductDetails = () => {
                                         height="200"
                                       />
                                     ) : null}
-                                  </Col></Row>
-                                  
+                                  </Col>
+                                  <Col lg={6}>
+                                    <div className="form-check mb-2 mt-2">
+                                      <Input
+                                        type="checkbox"
+                                        name="isOutOfStock"
+                                        value={isOutOfStock}
+                                        onChange={handlecheckGH}
+                                      />
+                                      <Label
+                                        className="form-check-label"
+                                        htmlFor="activeCheckBox"
+                                      >
+                                        Is OutOfStock
+                                      </Label>
+                                    </div>
+                                  </Col>
 
-                                
+                                  <Col lg={6}>
+                                    <div className="form-check mb-2 mt-2">
+                                      <Input
+                                        type="checkbox"
+                                        name="IsSubscriptionProduct"
+                                        value={IsSubscriptionProduct}
+                                        onChange={handlecheckSubs}
+                                        // checked={IsTopProducts}
+                                      />
+                                      <Label
+                                        className="form-check-label"
+                                        htmlFor="activeCheckBox"
+                                      >
+                                        Subscription Product
+                                      </Label>
+                                    </div>
+                                  </Col>
 
                                   <div className="mt-5">
                                     <Col lg={6}>
@@ -670,7 +737,7 @@ const ProductDetails = () => {
                               <Form>
                                 <Row>
                                   <Row>
-                                    <Col lg={3}>
+                                    <Col lg={6}>
                                       <div className="form-floating  mb-3">
                                         <select
                                           name="category"
@@ -692,7 +759,7 @@ const ProductDetails = () => {
                                           })}
                                         </select>
                                         <Label>
-                                           Category{" "}
+                                          Product Category{" "}
                                           <span className="text-danger">*</span>
                                         </Label>
                                         {isSubmit && (
@@ -702,12 +769,12 @@ const ProductDetails = () => {
                                         )}
                                       </div>
                                     </Col>
-                                    <Col lg={3}>
+                                    <Col lg={4}>
                                       <div className="form-floating mb-3">
                                         <input
                                           type="text"
                                           className={validClassPN}
-                                          placeholder=""
+                                          placeholder="Enter product name"
                                           required
                                           name="productName"
                                           value={values.productName}
@@ -717,7 +784,7 @@ const ProductDetails = () => {
                                           htmlFor="role-field"
                                           className="form-label"
                                         >
-                                          Complain
+                                          Product Name
                                           <span className="text-danger">*</span>
                                         </label>
                                         {isSubmit && (
@@ -727,7 +794,26 @@ const ProductDetails = () => {
                                         )}
                                       </div>
                                     </Col>
-                                   
+                                    <Col lg={2}>
+                                      <div className="form-floating mb-3">
+                                        <input
+                                          type="number"
+                                          className="form-control"
+                                          placeholder="Enter price"
+                                          required
+                                          name="price"
+                                          value={values.price}
+                                          onChange={handleChange}
+                                        />
+                                        <label
+                                          htmlFor="role-field"
+                                          className="form-label"
+                                        >
+                                          Price
+                                          <span className="text-danger">*</span>
+                                        </label>
+                                      </div>
+                                    </Col>
                                   </Row>
 
                                   <Col lg={6}>
@@ -747,16 +833,14 @@ const ProductDetails = () => {
                                         htmlFor="role-field"
                                         className="form-label"
                                       >
-                                        Location
+                                        Description
                                       </label>
                                     </div>
                                   </Col>
 
-                                  <Row>
-
                                   <Col lg={6}>
                                     <label>
-                                       Image{" "}
+                                      Product Image{" "}
                                       <span className="text-danger">*</span>
                                     </label>
                                     <input
@@ -788,9 +872,42 @@ const ProductDetails = () => {
                                       />
                                     ) : null}
                                   </Col>
-                                  </Row>
 
-                                
+                                  <Col lg={6}>
+                                    <div className="form-check mb-2 mt-2">
+                                      <Input
+                                        type="checkbox"
+                                        name="isOutOfStock"
+                                        value={isOutOfStock}
+                                        onChange={handlecheckGH}
+                                        checked={isOutOfStock}
+                                      />
+                                      <Label
+                                        className="form-check-label"
+                                        htmlFor="activeCheckBox"
+                                      >
+                                        Is OutOfStock
+                                      </Label>
+                                    </div>
+                                  </Col>
+
+                                  <Col lg={6}>
+                                    <div className="form-check mb-2 mt-2">
+                                      <Input
+                                        type="checkbox"
+                                        name="IsSubscriptionProduct"
+                                        value={IsSubscriptionProduct}
+                                        onChange={handlecheckSubs}
+                                        checked={IsSubscriptionProduct}
+                                      />
+                                      <Label
+                                        className="form-check-label"
+                                        htmlFor="activeCheckBox"
+                                      >
+                                        Subscription Product
+                                      </Label>
+                                    </div>
+                                  </Col>
 
                                   <div className="mt-5">
                                     <Col lg={6}>

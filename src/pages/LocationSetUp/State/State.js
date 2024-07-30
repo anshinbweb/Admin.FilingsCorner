@@ -386,7 +386,7 @@ const State = () => {
     },
   ];
 
-  document.title = "State | Data Insights";
+  document.title = "State | Project Name";
   return (
     <React.Fragment>
       <UiContent />

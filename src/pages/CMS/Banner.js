@@ -492,7 +492,7 @@ const Banner = () => {
     },
   ];
 
-  document.title = "Bannner | Data Insights";
+  document.title = "Bannner | Project Name";
 
   return (
     <React.Fragment>

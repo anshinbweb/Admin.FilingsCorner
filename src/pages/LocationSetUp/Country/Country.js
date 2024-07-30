@@ -336,7 +336,7 @@ const Country = () => {
     },
   ];
 
-  document.title = "Country | Data Insights";
+  document.title = "Country | Project Name";
 
   return (
     <React.Fragment>

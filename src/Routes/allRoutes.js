@@ -11,7 +11,7 @@ import Blogs from "../pages/Blogs/Blogs";
 import PromocodeMaster from "../pages/Subscription/PromocodeMaster";
 import ProductDetails from "../pages/Products/ProductsDetails";
 import UserProfile from "../pages/Authentication/user-profile";
-// import Banner from "../pages/CMS/Banner";
+import Banner from "../pages/CMS/Banner";
 import CompanyDetails from "../pages/Setup/CompanyDetails";
 import AdminUser from "../pages/Auth/AdminUser";
 const authProtectedRoutes = [
@@ -27,10 +27,10 @@ const authProtectedRoutes = [
   { path: "/category", component: <CategoryMaster /> },
 
   { path: "/blogs", component: <Blogs /> },
-  // { path: "/banner", component: <Banner /> },
+  { path: "/banner", component: <Banner /> },
   { path: "/promocode-master", component: <PromocodeMaster /> },
 
-  { path: "/data-insights", component: <ProductDetails /> },
+  { path: "/product-details", component: <ProductDetails /> },
 
 
   {
