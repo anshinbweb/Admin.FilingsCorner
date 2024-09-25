@@ -207,3 +207,9 @@ $value in $theme-colors {
   background-color: var(--#{$prefix}gray-300) !important;
   border-color: var(--#{$prefix}border-color) !important;
 }
+
+.goog-te-gadget-simple{
+  position: absolute;
+  /* white-space: nowrap; */
+  left: 70%;
+}

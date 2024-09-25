@@ -216,7 +216,7 @@ const GoogleTranslate = () => {
   return (
     <div style={{
         position: "absolute",
-        left: "70%",
+        // left: "70%",
         paddingTop: "19px",
         width: "100%",
         zIndex: "9999",

@@ -27,6 +27,8 @@ import {
   removeBannerImages,
   updateBannerImages,
 } from "../../functions/CMS/Banner";
+import ImageUploader from "../../Components/Common/ImageUploader";
+
 import DeleteModal from "../../Components/Common/DeleteModal";
 import FormsHeader from "../../Components/Common/FormsModalHeader";
 import FormsFooter from "../../Components/Common/FormAddFooter";
@@ -37,6 +39,7 @@ const initialState = {
   bannerImage: "",
   IsActive: false,
 };
+
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
@@ -181,17 +184,8 @@ const Banner = () => {
     if (Object.keys(errors).length === 0) {
       const formData = new FormData();
 
-      if (completedCrop && previewCanvasRef.current) {
-        const canvas = previewCanvasRef.current;
-        await new Promise((resolve) => {
-          canvas.toBlob((blob) => {
-            formData.append("myFile", blob, "filename.png");
-            resolve();
-          });
-        });
-      } else if (imgSrc) {
-        formData.append("myFile", imgSrc);
-      }
+      formData.append("myFile", croppedBlobs, "banner.png");
+      
 
       formData.append("Description", values.Description);
       formData.append("keyWord", values.keyWord);
@@ -319,18 +313,11 @@ const Banner = () => {
     if (Object.keys(erros).length === 0) {
       const formData = new FormData();
 
-      if (completedCrop && previewCanvasRef.current) {
-        const canvas = previewCanvasRef.current;
-        await new Promise((resolve) => {
-          canvas.toBlob((blob) => {
-            formData.append("myFile", blob, "filename.png");
-            resolve();
-          });
-        });
-      } else if (imgSrc) {
-        formData.append("myFile", imgSrc);
+      if (croppedBlobs.length === 0) {
+        formData.append("myFile", values.bannerImage);
+      } else {
+        formData.append("myFile", croppedBlobs, "banner.png");
       }
-
       formData.append("Description", values.Description);
       formData.append("keyWord", values.keyWord);
       formData.append("IsActive", values.IsActive);
@@ -491,6 +478,12 @@ const Banner = () => {
       minWidth: "180px",
     },
   ];
+  const [croppedBlobs, setCroppedBlobs] = useState(null);
+
+  const handleImageSave = (blob, imageURL) => {
+    setCroppedBlobs(blob);
+    setValues({ ...values, bannerImage: imageURL });
+  };
 
   document.title = "Bannner | Project Name";
 
@@ -608,38 +601,7 @@ const Banner = () => {
             <Col lg={6}>
               <div className="mb-3">
                 <Label className="form-label">Banner Image</Label>
-                <input
-                  type="file"
-                  name="bannerImage"
-                  accept="image/*"
-                  onChange={onSelectFile}
-                />
-                {imgSrc && (
-                  <div>
-                    <ReactCrop
-                      crop={crop}
-                      onChange={(_, percentCrop) => setCrop(percentCrop)}
-                      onComplete={(c) => setCompletedCrop(c)}
-                      aspect={ASPECT_RATIO}
-                    >
-                      <img
-                        ref={imgRef}
-                        alt="Crop me"
-                        src={imgSrc}
-                        onLoad={onImageLoad}
-                      />
-                    </ReactCrop>
-                    <canvas
-                      ref={previewCanvasRef}
-                      style={{
-                        border: "1px solid black",
-                        objectFit: "contain",
-                        width: completedCrop?.width ?? 0,
-                        height: completedCrop?.height ?? 0,
-                      }}
-                    />
-                  </div>
-                )}
+                <ImageUploader onSave={handleImageSave} initialLogo={bannerImage}  ASPECT_RATIO={1}/>
                 <p className="text-danger">{formErrors.bannerImage}</p>
               </div>
             </Col>
@@ -731,38 +693,7 @@ const Banner = () => {
             <Col lg={6}>
               <div className="mb-3">
                 <Label className="form-label">Banner Image</Label>
-                <input
-                  type="file"
-                  name="bannerImage"
-                  accept="image/*"
-                  onChange={onSelectFile}
-                />
-                {imgSrc && (
-                  <div>
-                    <ReactCrop
-                      crop={crop}
-                      onChange={(_, percentCrop) => setCrop(percentCrop)}
-                      onComplete={(c) => setCompletedCrop(c)}
-                      aspect={ASPECT_RATIO}
-                    >
-                      <img
-                        ref={imgRef}
-                        alt="Crop me"
-                        src={imgSrc}
-                        onLoad={onImageLoad}
-                      />
-                    </ReactCrop>
-                    <canvas
-                      ref={previewCanvasRef}
-                      style={{
-                        border: "1px solid black",
-                        objectFit: "contain",
-                        width: completedCrop?.width ?? 0,
-                        height: completedCrop?.height ?? 0,
-                      }}
-                    />
-                  </div>
-                )}
+                <ImageUploader onSave={handleImageSave} initialLogo={bannerImage}  ASPECT_RATIO={1}/>
                 <p className="text-danger">{formErrors.bannerImage}</p>
               </div>
             </Col>
