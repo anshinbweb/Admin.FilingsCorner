@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Collapse } from "reactstrap";
 
 // Import Data
 import navdata from "../LayoutMenuData";
-//i18n
 import { withTranslation } from "react-i18next";
 import withRouter from "../../Components/Common/withRouter";
+import { AuthContext } from "../../context/AuthContext";
 
 const VerticalLayout = (props) => {
   const [locationSetup, setLocationSetup] = useState(false);
@@ -24,6 +24,8 @@ const VerticalLayout = (props) => {
 
   const navData = navdata().props.children;
   const path = props.router.location.pathname;
+
+  const { adminData, setAdminData } = useContext(AuthContext);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -113,6 +115,7 @@ const VerticalLayout = (props) => {
   return (
     <React.Fragment>
       {/* menu Items */}
+
       <li className="menu-title">
         <span data-key="t-menu">Menu</span>
       </li>
@@ -126,14 +129,28 @@ const VerticalLayout = (props) => {
             setSetup(!setup);
           }}
         >
-          <span data-key="t-apps"> Setup </span>
+          <span data-key="t-apps">Company</span>
         </Link>
 
         <Collapse className="menu-dropdown" isOpen={setup}>
           <ul className="nav nav-sm flex-column test">
-            <li className="nav-item">
+            {adminData?.role === "superadmin" && (
+              <li className="nav-item">
+              <Link to="/company-master" className="nav-link">
+                Company Master
+              </Link>
+            </li>)
+            }
+            {adminData?.role === "admin" && (
+              <li className="nav-item">
               <Link to="/company-details" className="nav-link">
                 Company Details
+              </Link>
+            </li>)
+            }
+            {/* <li className="nav-item">
+              <Link to="/employee-master" className="nav-link">
+                Employee Master
               </Link>
             </li>
 
@@ -142,12 +159,6 @@ const VerticalLayout = (props) => {
                 Admin Users
               </Link>
             </li>
-            {/* <li className="nav-item">
-              <Link to="/#" className="nav-link">
-                Roles
-              </Link>
-            </li> */}
-
             <li className="nav-item">
               <Link
                 className="nav-link menu-link"
@@ -180,19 +191,14 @@ const VerticalLayout = (props) => {
                       City
                     </Link>
                   </li>
-                  {/* <li className="nav-item">
-                    <Link to="/location" className="nav-link">
-                      Company Location
-                    </Link>
-                  </li> */}
                 </ul>
               </Collapse>
-            </li>
+            </li> */}
           </ul>
         </Collapse>
       </li>
 
-      <li className="nav-item">
+      {/* <li className="nav-item">
         <Link
           className="nav-link menu-link"
           to="#"
@@ -229,9 +235,9 @@ const VerticalLayout = (props) => {
             </li>
           </ul>
         </Collapse>
-      </li>
+      </li> */}
 
-      <li className="nav-item">
+      {/* <li className="nav-item">
         <Link
           className="nav-link menu-link"
           to="#"
@@ -255,9 +261,9 @@ const VerticalLayout = (props) => {
             </li>
           </ul>
         </Collapse>
-      </li>
+      </li> */}
 
-      <li className="nav-item">
+      {/* <li className="nav-item">
         <Link
           className="nav-link menu-link"
           to="#"
@@ -279,9 +285,9 @@ const VerticalLayout = (props) => {
           </ul>
           <ul className="nav nav-sm flex-column test"></ul>
         </Collapse>
-      </li>
+      </li> */}
 
-      <li className="nav-item">
+      {/* <li className="nav-item">
         <Link
           className="nav-link menu-link"
           to="#"
@@ -310,7 +316,7 @@ const VerticalLayout = (props) => {
             </li>
           </ul>
         </Collapse>
-      </li>
+      </li> */}
     </React.Fragment>
   );
 };

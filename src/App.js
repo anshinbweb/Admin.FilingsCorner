@@ -14,6 +14,8 @@ import Route from "./Routes";
 // Fake Backend
 import fakeBackend from "./helpers/AuthType/fakeBackend";
 
+import { AuthProvider } from "./context/AuthContext";
+
 // Activating fake backend
 fakeBackend();
 
@@ -32,11 +34,13 @@ fakeBackend();
 // initFirebaseBackend(firebaseConfig);
 
 function App() {
-  return (
-    <React.Fragment>
-      <Route />
-    </React.Fragment>
-  );
+    return (
+        <React.Fragment>
+            <AuthProvider>
+                <Route />
+            </AuthProvider>
+        </React.Fragment>
+    );
 }
 
 export default App;

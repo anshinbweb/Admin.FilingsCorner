@@ -402,7 +402,7 @@ const State = () => {
               <Card>
                 <CardHeader>
                   <FormsHeader
-                    formName="Country"
+                    formName="State"
                     filter={filter}
                     handleFilter={handleFilter}
                     tog_list={tog_list}
