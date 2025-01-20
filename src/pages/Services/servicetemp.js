@@ -18,9 +18,12 @@ import FormsHeader from "../../Components/Common/FormsHeader";
 import FormsFooter from "../../Components/Common/FormAddFooter";
 import { AuthContext } from "../../context/AuthContext";
 import { createEmployeeMaster, deleteEmployeeMaster, getEmployeeMaster, updateEmployeeMaster } from "../../functions/Master/employeeMaster";
-import Flatpickr from "react-flatpickr"
+import { getRequiredDocsByCompany } from "../../functions/Services/requiredDocsFunc";
+import { getFrequencyOptionByCompanyId } from "../../functions/Services/freqOptionsFunc";
+import Select from "react-select";
+import { getCurrencyByCompanyId } from "../../functions/Services/currencyFunc";
 
-const EmployeeMaster = () => {
+const ServiceMaster = () => {
 
     const { adminData, setAdminData } = useContext(AuthContext);
 
@@ -30,16 +33,10 @@ const EmployeeMaster = () => {
     const [_id, set_Id] = useState("");
 
     const initialState = {
-        firstName:"",
-        lastName:"",
-        email:"",
-        department:"",
-        photo:"",
-        password:"",
-        phone:"",
-        dateOfJoining:"",
-        currentSalary:"",
-        isActive: false,
+        serviceName: "",
+        serviceDescription: "",
+        requiredDocument: [],
+        IsActive: false,
     };
 
     const [remove_id, setRemove_id] = useState("");
@@ -61,92 +58,110 @@ const EmployeeMaster = () => {
     const [updateForm, setUpdateForm] = useState(false);
     const [data, setData] = useState([]);
 
+    const [reqDocsList, setReqDocsList] = useState([]);
+    const [reqDocs, setReqDocs] = useState([]);
+
+    const [frequencyOptionList, setFrequencyOptionList] = useState([]);
+    const [frequencyOption, setFrequencyOption] = useState([])
+
+    const [currencyList, setCurrencyList] = useState([]);
+    const [currency, setCurrency] = useState([]);
+
+
+
+    const getReqDocs = () => {
+            getRequiredDocsByCompany(adminData.data._id)
+                .then((res) => {
+                    setReqDocsList(res.requiredDocuments);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        };
+    
+    const getFrequencyOptions = () => {
+        getFrequencyOptionByCompanyId(adminData.data._id)
+            .then((res) => {
+                setFrequencyOptionList(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    const getCurrency = () => {
+        getCurrencyByCompanyId(adminData.data._id)
+            .then((res) => {
+                setCurrencyList(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    useEffect(() => {
+        getReqDocs();
+        getFrequencyOptions()
+        getCurrency()
+    }, []);
+
     const columns = [
         {
-            name: "Employee Photo",
-            selector: (row) => <div>
-            <img
-                src={`${process.env.REACT_APP_API_URL_COFFEE}/${row.photo}`}
-                style={{
-                    width: "50px",
-                    height: "50px",
-                    borderRadius: "50%",
-                }}
-                alt="Employee"
-            />
-        </div>,
-            sortable: false,
-            minWidth: "150px",
-        },
-        {
-            name: "First Name",
-            selector: (row) => row.firstName,
+            name: "Service Name",
+            selector: (row) => row.serviceName,
             sortable: true,
-            sortField: "row.firstName",
+            sortField: "row.serviceName",
             minWidth: "150px",
         },
         {
-            name: "Last Name",
-            selector: (row) => row.lastName,
+            name: "Active",
+            selector: (row) => (row.isActive ? "True" : "False"),
             sortable: true,
-            sortField: "row.lastName",
+            sortField: "password",
             minWidth: "150px",
         },
-        {
-            name: "Email",
-            selector: (row) => row.email,
-            sortable: true,
-            sortField: "row.email",
-            minWidth: "150px",
-        },
-        {
-            name: "Department",
-            selector: (row) => row.department,
-            sortable: true,
-            sortField: "row.department",
-            minWidth: "150px",
-        },
-        {
-          name: "Action",
-          selector: (row) => {
-            return (
-              <React.Fragment>
-                <div className="d-flex gap-2">
-                  <div className="edit">
-                    <button
-                      className="btn btn-sm btn-success edit-item-btn "
-                      data-bs-toggle="modal"
-                      data-bs-target="#showModal"
-                      onClick={() => handleTog_edit(row._id)}
-                    >
-                      Edit
-                    </button>
-                  </div>
 
-                  <div className="remove">
-                    <button
-                      className="btn btn-sm btn-danger remove-item-btn"
-                      data-bs-toggle="modal"
-                      data-bs-target="#deleteRecordModal"
-                      onClick={() => tog_delete(row._id)}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              </React.Fragment>
-            );
-          },
-          sortable: false,
-          minWidth: "180px",
+        {
+            name: "Action",
+            selector: (row) => {
+                return (
+                    <React.Fragment>
+                        <div className="d-flex gap-2">
+                            <div className="edit">
+                                <button
+                                    className="btn btn-sm btn-success edit-item-btn "
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#showModal"
+                                    onClick={() => handleTog_edit(row._id)}
+                                >
+                                    Edit
+                                </button>
+                            </div>
+
+                            <div className="remove">
+                                <button
+                                    className="btn btn-sm btn-danger remove-item-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteRecordModal"
+                                    onClick={() => tog_delete(row._id)}
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    </React.Fragment>
+                );
+            },
+            sortable: false,
+            minWidth: "180px",
         },
     ];
 
     useEffect(() => {
-        fetchEmployeeMaster();
+        fetchServices();
     }, [pageNo, perPage, column, sortDirection, query, filter]);
 
-    const fetchEmployeeMaster = async () => {
+    const fetchServices = async () => {
         setLoading(true);
         let skip = (pageNo - 1) * perPage;
         if (skip < 0) {
@@ -155,14 +170,14 @@ const EmployeeMaster = () => {
 
         await axios
             .post(
-                `${process.env.REACT_APP_API_URL_COFFEE}/api/auth/listbyparams/employee-master/${adminData?.data?._id}`,
+                `${process.env.REACT_APP_API_URL_COFFEE}/api/auth/listbyparams/service/${adminData.data._id}`,
                 {
                     skip: skip,
                     per_page: perPage,
                     sorton: column,
                     sortdir: sortDirection,
                     match: query,
-                    isActive: filter,
+                    IsActive: filter,
                 },
                 {
                     headers: {
@@ -173,17 +188,15 @@ const EmployeeMaster = () => {
                 }
             )
             .then((response) => {
+                console.log(response)
                 if (response.data.length > 0) {
-                    let res = response.data[0].data;
+                    let res = response.data[0];
                     setLoading(false);
-                    setData(res);
+                    setData(res.data);
                     setTotalRows(res.count);
-                } else {
+                } else if (response.data.length === 0) {
                     setData([]);
                 }
-            })
-            .catch((err) => {
-                console.log(err);
             });
 
         setLoading(false);
@@ -241,7 +254,7 @@ const EmployeeMaster = () => {
                     setPhoto("");
                     setIsSubmit(false);
                     setFormErrors({});
-                    fetchEmployeeMaster();
+                    fetchServices();
                 })
                 .catch((err) => {
                     console.log(err);
@@ -282,7 +295,7 @@ const EmployeeMaster = () => {
         deleteEmployeeMaster(remove_id)
             .then((res) => {
                 setmodal_delete(!modal_delete);
-                fetchEmployeeMaster();
+                fetchServices();
             })
             .catch((err) => {
                 console.log(err);
@@ -328,7 +341,7 @@ const EmployeeMaster = () => {
                     setCheckImagePhoto(false)
                     setIsSubmit(false);
                     setFormErrors({});
-                    fetchEmployeeMaster();
+                    fetchServices();
                     setRemovedImages({
                         photo:false
                     });
@@ -368,7 +381,6 @@ const EmployeeMaster = () => {
         setFormErrors(false);
         getEmployeeMaster(_id)
             .then((res) => {
-                console.log(res)
                 setValues(res.employee);
             })
             .catch((err) => {
@@ -490,279 +502,139 @@ const EmployeeMaster = () => {
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
-                                                                placeholder="Enter First Name"
+                                                                placeholder="Enter Service Name"
                                                                 required
-                                                                name="firstName"
-                                                                value={values.firstName}
+                                                                name="serviceName"
+                                                                value={values.serviceName}
                                                                 onChange={handleChange}
                                                             />
                                                                 <label
                                                                     htmlFor="role-field"
                                                                     className="form-label"
                                                                 >
-                                                                    First Name
+                                                                    Service Name
                                                                     <span className="text-danger"> *</span>
                                                                 </label>
                                                             {isSubmit && (
                                                                 <p className="text-danger">
-                                                                    {formErrors.firstName}
+                                                                    {formErrors.serviceName}
                                                                 </p>
                                                             )}
                                                         </div>
                                                     </Col>
-                                                    <Col lg={3}>
+                                                    <Col lg={6}>
                                                         <div className="form-floating mb-3">
-                                                            <input
-                                                                type="text"
+                                                            <Input
+                                                                type="textarea"
                                                                 className="form-control"
-                                                                placeholder="Enter Last Name"
+                                                                placeholder="Enter Service Description"
                                                                 required
-                                                                name="lastName"
-                                                                value={values.lastName}
+                                                                name="serviceDescription"
+                                                                value={values.serviceDescription}
                                                                 onChange={handleChange}
                                                             />
                                                             <label
                                                                 htmlFor="role-field"
                                                                 className="form-label"
                                                             >
-                                                                Last Name
+                                                                Service Description
                                                                 <span className="text-danger"> *</span>
                                                             </label>
                                                             {isSubmit && (
                                                                 <p className="text-danger">
-                                                                    {formErrors.lastName}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    </Col>
-                                                    <Col lg={3}>
-                                                        <div className="form-floating mb-3">
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                placeholder="Enter Email"
-                                                                required
-                                                                name="email"
-                                                                value={values.email}
-                                                                onChange={handleChange}
-                                                            />
-                                                            <label
-                                                                htmlFor="role-field"
-                                                                className="form-label"
-                                                            >
-                                                                Email
-                                                                <span className="text-danger"> *</span>
-                                                            </label>
-                                                            {isSubmit && (
-                                                                <p className="text-danger">
-                                                                    {formErrors.email}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    </Col>
-                                                    <Col lg={3}>
-                                                        <div className="form-floating mb-3">
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                placeholder="Enter Password"
-                                                                required
-                                                                name="password"
-                                                                value={values.password}
-                                                                onChange={handleChange}
-                                                            />
-                                                            <label
-                                                                htmlFor="role-field"
-                                                                className="form-label"
-                                                            >
-                                                                Password
-                                                                <span className="text-danger"> *</span>
-                                                            </label>
-                                                            {isSubmit && (
-                                                                <p className="text-danger">
-                                                                    {formErrors.password}
+                                                                    {formErrors.serviceDescription}
                                                                 </p>
                                                             )}
                                                         </div>
                                                     </Col>
                                                 </Row>
                                                 <Row>
-                                                <Col lg={3}>
+                                                    <Col lg={5}>
                                                         <div className="form-floating mb-3">
-                                                            <Input
-                                                                type="select"
-                                                                className="form-control"
-                                                                name="department"
-                                                                value={values.department}
-                                                                onChange={handleChange}
-                                                            >
-                                                                <option selected={true} disabled value="">
-                                                                    <label
-                                                                    htmlFor="role-field"
-                                                                    className="form-label"
-                                                                    >
-                                                                        Department
-                                                                        <span className="text-danger"> *</span>
-                                                                    </label>
-                                                                </option>
-                                                                <option key={1} value={"HR"}>
-                                                                        HR
-                                                                </option>
-                                                                <option key={2} value={"Developer"}>
-                                                                        Developer
-                                                                </option>
-                                                                <option key={3} value={"Sales"}>
-                                                                        Sales
-                                                                </option>
-                                                                <option key={4} value={"Marketing"}>
-                                                                        Marketing
-                                                                </option>
-                                                                <option key={5} value={"Finance"}>
-                                                                        Finance
-                                                                </option>
-                                                                <option key={6} value={"Executive"}>
-                                                                        Executive
-                                                                </option>
-                                                            </Input>
-                                                            {isSubmit && (
-                                                                <p className="text-danger">
-                                                                    {formErrors.department}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    </Col>
-                                                    <Col lg={3}>
-                                                        <div className="form-floating mb-3">
-                                                            <Input
-                                                                type="text"
-                                                                className="form-control"
-                                                                placeholder="Enter Phone No."
-                                                                required
-                                                                name="phone"
-                                                                value={values.phone}
-                                                                onChange={handleChange}
+                                                            <Select
+                                                                isMulti={true}
+                                                                placeholder="Add Documents"
+                                                                options={reqDocsList.map((doc) => ({
+                                                                    value: doc._id,
+                                                                    label: doc.documentName,
+                                                                }))}
+                                                                value={reqDocs}
+                                                                onChange={(selectedOptions) =>
+                                                                    setReqDocs(selectedOptions)
+                                                                }
                                                             />
-                                                            <label  htmlFor="role-field"
-                                                                className="form-label">
-                                                                Phone No.
-                                                                <span className="text-danger"> *</span>
-                                                            </label>
-                                                            {isSubmit && (
-                                                                <p className="text-danger">
-                                                                    {formErrors.phone}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    </Col>
-                                                    <Col lg={3}>
-                                                        <div className="form-floating mb-3">
-                                                            <Flatpickr
-                                                                value={values.dateOfJoining}
-                                                                onChange={(date) => {
-                                                                    setValues({
-                                                                        ...values,
-                                                                        dateOfJoining: date[0],
-                                                                    });
-                                                                }}
-                                                                options={{
-                                                                    altInput: true,
-                                                                    altFormat: "F j, Y",
-                                                                    dateFormat: "Y-m-d",
-                                                                }}
-                                                            />
-                                                            <label  htmlFor="role-field"
-                                                                className="form-label">
-                                                                Date of Joining
-                                                            </label>
-                                                            {isSubmit && (
-                                                                <p className="text-danger">
-                                                                    {formErrors.dateOfJoining}
-                                                                </p>
-                                                            )}
-                                                        </div>
-                                                    </Col>
-                                                    <Col lg={3}>
-                                                        <div className="form-floating mb-3">
-                                                            <Input
-                                                                type="text"
-                                                                className="form-control"
-                                                                placeholder="Enter Current Salary"
-                                                                required
-                                                                name="currentSalary"
-                                                                value={values.currentSalary}
-                                                                onChange={handleChange}
-                                                            />
-                                                            <label  htmlFor="role-field"
-                                                                className="form-label">
-                                                                current Salary
-                                                            </label>
-                                                            {isSubmit && (
-                                                                <p className="text-danger">
-                                                                    {formErrors.currentSalary}
-                                                                </p>
-                                                            )}
                                                         </div>
                                                     </Col>
                                                 </Row>
                                                 <Row>
-                                                    <Col lg={3}>
-                                                        <label>
-                                                            Photo
-                                                        </label>
-                                                        <input
-                                                            type="file"
-                                                            name="photo"
-                                                            className="form-control"
-                                                            accept=".jpg, .jpeg, .png"
-                                                            onChange={PhotoUpload}
-                                                        />
-                                                        {isSubmit && (
-                                                            <p className="text-danger">
-                                                                {formErrors.photo}
-                                                            </p>
-                                                        )}
-                                                        {!removedImages.photo && (
-                                                            <div style={{ position: 'relative', display: 'inline-block' }}>
-                                                                {(checkImagePhoto || values.photo) && (
-                                                                    <button
-                                                                        onClick={() => handleRemoveImage('photo')}
-                                                                        style={{
-                                                                            position: 'absolute',
-                                                                            top: '5px',
-                                                                            right: '5px',
-                                                                            backgroundColor: 'white',
-                                                                            border: '1px solid #EF4444',
-                                                                            color: '#EF4444',
-                                                                            borderRadius: '50%',
-                                                                            width: '24px',
-                                                                            height: '24px',
-                                                                            display: 'flex',
-                                                                            alignItems: 'center',
-                                                                            justifyContent: 'center',
-                                                                            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-                                                                            zIndex: 10,
-                                                                            cursor: 'pointer'
-                                                                        }}
-                                                                        type="button"
-                                                                        aria-label="Remove image"
-                                                                    >
-                                                                        X
-                                                                    </button>
-                                                                )}
-                                                        {checkImagePhoto ? (
-                                                            <img
-                                                                className="m-2"
-                                                                src={photo}
-                                                                alt="Profile"
-                                                                width="180"
-                                                                height="200"
-                                                            />
-                                                        ) :null}
-                                                    </div>
-                                                        )}
+                                                <Col lg={6}>
+                                                        <div className="table-responsive">
+                                                            <table className="table table-bordered">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th></th>
+                                                                        {currencyList.map((currency, index) => (
+                                                                            <th key={currency._id}>
+                                                                                <div className="form-check">
+                                                                                    <Input
+                                                                                        type="checkbox"
+                                                                                        name={`currency_${currency._id}`}
+                                                                                        id={`currency_${currency._id}`}
+                                                                                        checked={currency.isSelected || false}
+                                                                                        onChange={(e) => {
+                                                                                            const updatedCurrencyList = currencyList.map(c => 
+                                                                                                c._id === currency._id ? {...c, isSelected: e.target.checked} : c
+                                                                                            );
+                                                                                            setCurrencyList(updatedCurrencyList);
+                                                                                        }}
+                                                                                    />
+                                                                                    <Label className="form-check-label" for={`currency_${currency._id}`}>
+                                                                                        {currency.currencyCode}
+                                                                                    </Label>
+                                                                                </div>
+                                                                            </th>
+                                                                        ))}
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {frequencyOptionList.map(freq => (
+                                                                        <tr key={freq._id}>
+                                                                            <td>
+                                                                                <div className="form-check">
+                                                                                    <Input
+                                                                                        type="checkbox"
+                                                                                        name={`freq_${freq._id}`}
+                                                                                        id={`freq_${freq._id}`}
+                                                                                        checked={freq.isSelected || false}
+                                                                                        onChange={(e) => {
+                                                                                            const updatedFreqList = frequencyOptionList.map(f => 
+                                                                                                f._id === freq._id ? {...f, isSelected: e.target.checked} : f
+                                                                                            );
+                                                                                            setFrequencyOptionList(updatedFreqList);
+                                                                                        }}
+                                                                                    />
+                                                                                    <Label className="form-check-label" for={`freq_${freq._id}`}>
+                                                                                        {freq.frequencyType}
+                                                                                    </Label>
+                                                                                </div>
+                                                                            </td>
+                                                                            {currencyList.map(currency => (
+                                                                                <td key={`${freq._id}_${currency._id}`}>
+                                                                                    <Input
+                                                                                        type="number"
+                                                                                        className="form-control"
+                                                                                        placeholder="Enter amount"
+                                                                                        disabled={!(freq.isSelected && currency.isSelected)}
+                                                                                    />
+                                                                                </td>
+                                                                            ))}
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </Col>
                                                 </Row>
-
                                                 <div className="mt-5">
                                                     <Col lg={6}>
                                                     <div className="form-check mb-2">
@@ -782,8 +654,8 @@ const EmployeeMaster = () => {
                                                     </div>
                                                     </Col>
                                                 </div>
-
                                                 <Col lg={12}>
+                                                
                                                 <FormsFooter
                                                     handleSubmit={handleClick}
                                                     handleSubmitCancel={handleAddCancel}
@@ -962,19 +834,14 @@ const EmployeeMaster = () => {
                                                     </Col>
                                                     <Col lg={3}>
                                                         <div className="form-floating mb-3">
-                                                            <Flatpickr
-                                                                    value={values.dateOfJoining}
-                                                                    onChange={(date) => {
-                                                                        setValues({
-                                                                            ...values,
-                                                                            dateOfJoining: date[0],
-                                                                        });
-                                                                    }}
-                                                                    options={{
-                                                                        altInput: true,
-                                                                        altFormat: "F j, Y",
-                                                                        dateFormat: "Y-m-d",
-                                                                    }}
+                                                            <Input
+                                                                type="date"
+                                                                className="form-control"
+                                                                placeholder="Enter Date of Joining"
+                                                                required
+                                                                name="dateOfJoining"
+                                                                value={values.dateOfJoining}
+                                                                onChange={handleChange}
                                                             />
                                                             <label  htmlFor="role-field"
                                                                 className="form-label">
@@ -1191,4 +1058,4 @@ const EmployeeMaster = () => {
     );
 };
 
-export default EmployeeMaster;
+export default ServiceMaster;

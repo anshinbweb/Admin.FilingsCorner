@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import SimpleBar from "simplebar-react";
 //import logo
@@ -13,8 +13,12 @@ import VerticalLayout from "./VerticalLayouts";
 import TwoColumnLayout from "./TwoColumnLayout";
 import { Container } from "reactstrap";
 import HorizontalLayout from "./HorizontalLayout";
+import { AuthContext } from "../context/AuthContext";
 
 const Sidebar = ({ layoutType }) => {
+
+  const { adminData, setAdminData } = useContext(AuthContext);
+
   useEffect(() => {
     var verticalOverlay = document.getElementsByClassName("vertical-overlay");
     if (verticalOverlay) {
@@ -58,19 +62,19 @@ const Sidebar = ({ layoutType }) => {
         >
           <Link to="/users" className="mt-2 logo logo-dark">
             <span className="logo-sm">
-              <img src={logo} alt="" height="80" />
+              <img src={`${process.env.REACT_APP_API_URL_COFFEE}/${adminData?.data?.Logo}`} alt="" height="80" />
             </span>
             <span className="logo-lg">
-              <img src={logo} alt="" height="80" />
+              <img src={`${process.env.REACT_APP_API_URL_COFFEE}/${adminData?.data?.Logo}`} alt="" height="80" />
             </span>
           </Link>
 
           <Link to="/users" className="mt-2 logo logo-light">
             <span className="logo-sm">
-              <img src={logo} alt="" height="90" />
+              <img src={`${process.env.REACT_APP_API_URL_COFFEE}/${adminData?.data?.Logo}`} alt="" height="90" />
             </span>
             <span className="logo-lg">
-              <img src={logo} alt="" height="90" />
+              <img src={`${process.env.REACT_APP_API_URL_COFFEE}/${adminData?.data?.Logo}`} alt="" height="90" />
             </span>
           </Link>
           <button
@@ -87,13 +91,13 @@ const Sidebar = ({ layoutType }) => {
             <Container fluid>
               <div id="two-column-menu"></div>
               <ul className="navbar-nav" id="navbar-nav">
-                <HorizontalLayout />
+                <HorizontalLayout logo={adminData?.data.Logo} />
               </ul>
             </Container>
           </div>
         ) : layoutType === "twocolumn" ? (
           <React.Fragment>
-            <TwoColumnLayout layoutType={layoutType} />
+            <TwoColumnLayout layoutType={layoutType} logo={adminData?.data.Logo} />
             <div className="sidebar-background"></div>
           </React.Fragment>
         ) : (

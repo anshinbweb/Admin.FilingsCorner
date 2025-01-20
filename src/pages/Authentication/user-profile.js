@@ -32,7 +32,7 @@ const UserProfile = () => {
                                     <div className="d-flex">
                                         <div className="mx-3">
                                             <img
-                                                src={logo}
+                                                src={`${process.env.REACT_APP_API_URL_COFFEE}/${adminData?.data?.Logo}`}
                                                 alt=""
                                                 className="avatar-md rounded-circle img-thumbnail"
                                             />
@@ -43,7 +43,7 @@ const UserProfile = () => {
                                                     {adminData?.data?.firstName || adminData?.data?.CompanyName ||
                                                         "Admin"}{" "}
                                                     {adminData?.data?.lastName ||
-                                                        "User"}
+                                                        ""}
                                                 </h5>
                                                 <p className="mb-1">
                                                     Email Id :{" "}

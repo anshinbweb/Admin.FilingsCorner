@@ -14,7 +14,7 @@ import {
 } from "reactstrap";
 import { Alert } from "react-bootstrap";
 
-import logo from "../../assets/images/logo/RC-logo-png.png";
+import logo from "../../assets/images/logo/logo.png";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";

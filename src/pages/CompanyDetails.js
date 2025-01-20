@@ -135,6 +135,16 @@ const CompanyDetails = () => {
         return errors;
     };
 
+    const hasChanges = () => {
+        const valuesChanged = JSON.stringify(values) !== JSON.stringify(adminData?.data);
+        
+        const hasRemovedImages = Object.values(removedImages).some(value => value === true);
+        
+        const hasNewImages = updatedFavicon || updatedIcon || updatedLogo || updatedDigitalSignature;
+      
+        return valuesChanged || hasRemovedImages || hasNewImages;
+      };
+
     const handleUpdate = (e) => {
         e.preventDefault();
 
@@ -151,6 +161,10 @@ const CompanyDetails = () => {
                 IconUpdated: updatedIcon,
                 LogoUpdated: updatedLogo,
                 DigitalSignatureUpdated: updatedDigitalSignature,
+                Favicon:values.Favicon,
+                Icon:values.Icon,
+                Logo:values.Logo,
+                DigitalSignature:values.DigitalSignature,
             };
 
             Object.entries(removedImages).forEach(([key, value]) => {
@@ -164,12 +178,16 @@ const CompanyDetails = () => {
             for (const key in dataToSend) {
                 formdata.append(key, dataToSend[key]);
             }
+
+            console.log(formdata)
             updateCompany(adminData?.data?._id, formdata)
                 .then((res) => {
                     setFormErrors({});
                     getCompany(adminData?.data?._id)
                     .then((res) => {
                       setValues(res.data);
+                      console.log("DATA: ",res.data)
+                      setAdminData({data:res.data,role:adminData.role});
                           setCountry(res.data.CountryID);
                           setState(res.data.StateID);
                           setCity(res.data.City);
@@ -1015,6 +1033,7 @@ const CompanyDetails = () => {
                                                         className=" btn btn-success m-1"
                                                         id="add-btn"
                                                         onClick={handleUpdate}
+                                                        disabled={!hasChanges()}
                                                     >
                                                         Update
                                                     </button>
